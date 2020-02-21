@@ -63,9 +63,19 @@ def buildStr(argv):
         except:
           print('Missing value')
 
-  print(str(dept) + '_' + str(coursenum) +'_' + str(area) + '_' + str(title))
-  params = [dept, coursenum, area, title]
-  values = [deptVal, coursenumVal, areaVal, titleVal]
+    print(str(dept) + '_' + str(coursenum) +'_' + str(area) + '_' + str(title))
+    return[dept, coursenum, area, title, deptVal, coursenumVal, areaVal, titleVal]
+
+def selectStr(params):
+
+
+    # Create a prepared statement and substitute values.
+    stmtStr = 'SELECT classid, dept, coursenum, area, title ' + \
+              'FROM crosslistings, classes, courses ' + \
+              'WHERE classes.courseid = courses.courseid ' + \
+              'AND classes.courseid = crosslistings.courseid'
+
+    return stmtStr
 
 def main(argv):
     DATABASE_NAME = 'reg.sqlite'
@@ -74,7 +84,7 @@ def main(argv):
         raise Exception('Database connection failed')
 
     try:
-        buildStr(["-coursenum", "attack", "-title", "Attack of the Watermelons"])
+        param = buildStr(argv)
 
     except ValueError:
         print('Duplicate key')
@@ -82,18 +92,12 @@ def main(argv):
     connection = connect(DATABASE_NAME)
     cursor = connection.cursor()
 
-    # Create a prepared statement and substitute values.
-    stmtStr = 'SELECT classid, dept, coursenum, area, title ' + \
-              'FROM crosslistings, classes, courses ' + \
-              'WHERE classes.courseid = courses.courseid ' + \
-              'AND classes.courseid = crosslistings.courseid'
-
-
+    stmtStr = selectStr(param)
     cursor.execute(stmtStr)
 
     row = cursor.fetchone()
     while row is not None:
-        print('Class day of the week:', str(row[0]))
+        print('Class ID:', str(row[0]))
         print('Class Title:', str(row[1]))
         print('Quantity:', str(row[2]))
         print()
