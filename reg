@@ -83,12 +83,13 @@ def main(argv):
     cursor = connection.cursor()
 
     # Create a prepared statement and substitute values.
-    stmtStr = 'SELECT classid, dept, coursenum, aea, title ' + \
+    stmtStr = 'SELECT classid, dept, coursenum, area, title ' + \
               'FROM crosslistings, classes, courses ' + \
               'WHERE classes.courseid = courses.courseid ' + \
-              'AND roomnum = ?'
+              'AND classes.courseid = crosslistings.courseid'
 
-    cursor.execute(stmtStr, [roomnum])
+
+    cursor.execute(stmtStr)
 
     row = cursor.fetchone()
     while row is not None:
