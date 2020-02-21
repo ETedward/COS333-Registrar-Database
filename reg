@@ -11,60 +11,63 @@ from sqlite3 import connect
 
 # -----------------------------------------------------------------------
 def buildStr(argv):
+  print (argv)
   dept = coursenum = area = title = loopskip = 0
   deptVal = coursenumVal = areaVal = titleVal = ''
   length = len(argv)
+  print(length)
   for i in range(length):
-    if (loopskip):
-      loopskip = 0
-      continue
-    if argv[i] == '-dept' and dept == 1:
-        raise ValueError
-    elif argv[i] == "-dept":
-        dept = 1
-        try:
-          deptVal = argv[i+1]
-          loopskip = 1
-          print (deptVal)
+      if loopskip:
+          loopskip = 0
           continue
-        except:
-          print('Missing value')
-    if argv[i] == '-coursenum' and coursenum == 1:
-        raise ValueError
-    elif argv[i] == "-coursenum":
-        coursenum = 1
-        try:
-          coursenumVal = argv[i+1]
-          loopskip = 1
-          print (coursenumVal)
-          continue
-        except:
-          print('Missing value')
-    if argv[i] == '-area' and area == 1:
-        raise ValueError
-    elif argv[i] == "-area":
-        area = 1
-        try:
-          areaVal = argv[i+1]
-          loopskip = 1
-          print (areaVal)
-          continue
-        except:
-          print('Missing value')
-    if argv[i] == '-title' and title == 1:
-        raise ValueError
-    elif argv[i] == "-title":
-        title = 1
-        try:
-          titleVal = argv[i+1]
-          loopskip = 1
-          print (titleVal)
-          continue
-        except:
-          print('Missing value')
+      if argv[i] == '-dept' and dept == 1:
+          raise ValueError
+      elif argv[i] == "-dept":
+          dept = 1
+          try:
+              deptVal = argv[i+1]
+              loopskip = 1
+              print (deptVal)
+              continue
+          except:
+              print('Missing value')
+      if argv[i] == '-coursenum' and coursenum == 1:
+          raise ValueError
+      elif argv[i] == "-coursenum":
+          coursenum = 1
+          try:
+              coursenumVal = argv[i+1]
+              loopskip = 1
+              print (coursenumVal)
+              continue
+          except:
+              print('Missing value')
+      if argv[i] == '-area' and area == 1:
+            raise ValueError
+      elif argv[i] == "-area":
+          area = 1
+          try:
+              areaVal = argv[i+1]
+              loopskip = 1
+              print (areaVal)
+              continue
+          except:
+              print('Missing value')
+      if argv[i] == '-title' and title == 1:
+          raise ValueError
+      elif argv[i] == "-title":
+          title = 1
+          try:
+              titleVal = argv[i+1]
+              loopskip = 1
+              print (titleVal)
+              continue
+          except:
+              print('Missing value')
 
-    print(str(dept) + '_' + str(coursenum) +'_' + str(area) + '_' + str(title))
-    return[dept, coursenum, area, title, deptVal, coursenumVal, areaVal, titleVal]
+  print(str(dept) + '_' + str(coursenum) +'_' + str(area) + '_' + str(title))
+  print(deptVal + '_' + coursenumVal + '_' + areaVal + '_' + titleVal)
+  return[dept, coursenum, area, title, deptVal, coursenumVal, areaVal, titleVal]
 
 def selectStr(params):
 
@@ -73,7 +76,7 @@ def selectStr(params):
     stmtStr = 'SELECT classid, dept, coursenum, area, title ' + \
               'FROM crosslistings, classes, courses ' + \
               'WHERE classes.courseid = courses.courseid ' + \
-              'AND classes.courseid = crosslistings.courseid'
+              'AND classes.courseid = crosslistings.courseid '
 
     return stmtStr
 
@@ -95,13 +98,13 @@ def main(argv):
     stmtStr = selectStr(param)
     cursor.execute(stmtStr)
 
-    row = cursor.fetchone()
-    while row is not None:
-        print('Class ID:', str(row[0]))
-        print('Class Title:', str(row[1]))
-        print('Quantity:', str(row[2]))
-        print()
-        row = cursor.fetchone()
+    # row = cursor.fetchone()
+    # while row is not None:
+    #     print('Class ID:', str(row[0]))
+    #     print('Class Title:', str(row[1]))
+    #     print('Quantity:', str(row[2]))
+    #     print()
+    #     row = cursor.fetchone()
 
     cursor.close()
     connection.close()
