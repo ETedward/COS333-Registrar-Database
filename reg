@@ -10,28 +10,84 @@ from sys import argv, stderr, exit
 from sqlite3 import connect
 
 # -----------------------------------------------------------------------
-print("reached here")
+def buildStr(argv):
+  dept = coursenum = area = title = loopskip = 0
+  deptVal = coursenumVal = areaVal = titleVal = ''
+  length = len(argv)
+  for i in range(length):
+    if (loopskip):
+      loopskip = 0
+      continue
+    if argv[i] == '-dept' and dept == 1:
+        raise ValueError
+    elif argv[i] == "-dept":
+        dept = 1
+        try:
+          deptVal = argv[i+1]
+          loopskip = 1
+          print (deptVal)
+          continue
+        except:
+          print('Missing value')
+    if argv[i] == '-coursenum' and coursenum == 1:
+        raise ValueError
+    elif argv[i] == "-coursenum":
+        coursenum = 1
+        try:
+          coursenumVal = argv[i+1]
+          loopskip = 1
+          print (coursenumVal)
+          continue
+        except:
+          print('Missing value')
+    if argv[i] == '-area' and area == 1:
+        raise ValueError
+    elif argv[i] == "-area":
+        area = 1
+        try:
+          areaVal = argv[i+1]
+          loopskip = 1
+          print (areaVal)
+          continue
+        except:
+          print('Missing value')
+    if argv[i] == '-title' and title == 1:
+        raise ValueError
+    elif argv[i] == "-title":
+        title = 1
+        try:
+          titleVal = argv[i+1]
+          loopskip = 1
+          print (titleVal)
+          continue
+        except:
+          print('Missing value')
+
+  print(str(dept) + '_' + str(coursenum) +'_' + str(area) + '_' + str(title))
+  params = [dept, coursenum, area, title]
+  values = [deptVal, coursenumVal, areaVal, titleVal]
 
 def main(argv):
     DATABASE_NAME = 'reg.sqlite'
 
-    if len(argv) != 2:
-        print("Usage: python reg title", file=stderr)
-        exit(1)
-
-    roomnum = argv[1]
-
     if not path.isfile(DATABASE_NAME):
         raise Exception('Database connection failed')
+
+    try:
+        buildStr(["-coursenum", "attack", "-title", "Attack of the Watermelons"])
+
+    except ValueError:
+        print('Duplicate key')
 
     connection = connect(DATABASE_NAME)
     cursor = connection.cursor()
 
     # Create a prepared statement and substitute values.
-    stmtStr = 'SELECT roomnum, area, title ' + \
-              'FROM classes, courses ' + \
+    stmtStr = 'SELECT classid, dept, coursenum, aea, title ' + \
+              'FROM crosslistings, classes, courses ' + \
               'WHERE classes.courseid = courses.courseid ' + \
               'AND roomnum = ?'
+
     cursor.execute(stmtStr, [roomnum])
 
     row = cursor.fetchone()
