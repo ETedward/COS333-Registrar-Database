@@ -69,7 +69,7 @@ def buildStr(argv):
   print(deptVal + '_' + coursenumVal + '_' + areaVal + '_' + titleVal)
   return[dept, coursenum, area, title, deptVal, coursenumVal, areaVal, titleVal]
 
-def selectStr(params):
+def selectStr(param):
 
 
     # Create a prepared statement and substitute values.
@@ -96,15 +96,32 @@ def main(argv):
     cursor = connection.cursor()
 
     stmtStr = selectStr(param)
-    cursor.execute(stmtStr)
+    values = []
+    if (param[0]): # dept is true
+        stmtStr += 'AND dept = ? '
+        values.append(param[4])
 
-    # row = cursor.fetchone()
-    # while row is not None:
-    #     print('Class ID:', str(row[0]))
-    #     print('Class Title:', str(row[1]))
-    #     print('Quantity:', str(row[2]))
-    #     print()
-    #     row = cursor.fetchone()
+    if (param[1]): # coursenum is true
+        stmtStr += 'AND coursenum = ? '
+        values.append(param[5])
+
+    if (param[2]): # area is true
+        stmtStr += 'AND area = ? '
+        values.append(param[6])
+
+    if (param[3]): # title is true
+        stmtStr += 'AND title = ? '
+        values.append(param[7])
+
+    cursor.execute(stmtStr, values)
+
+    row = cursor.fetchone()
+    while row is not None:
+        print('Class ID:', str(row[0]))
+        print('Class Title:', str(row[1]))
+        print('Quantity:', str(row[2]))
+        print()
+        row = cursor.fetchone()
 
     cursor.close()
     connection.close()
