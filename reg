@@ -65,8 +65,6 @@ def buildStr(argv):
           except:
               print('Missing value')
 
-  print(str(dept) + '_' + str(coursenum) +'_' + str(area) + '_' + str(title))
-  print(deptVal + '_' + coursenumVal + '_' + areaVal + '_' + titleVal)
   return[dept, coursenum, area, title, deptVal, coursenumVal, areaVal, titleVal]
 
 def selectStr(param):
@@ -106,19 +104,23 @@ def main(argv):
     stmtStr = selectStr(param)
     values = []
     if (param[0]): # dept is true
-        stmtStr += 'AND dept = ? '
+        param[4] = "%" + param[4] + "%"
+        stmtStr += "AND dept LIKE ? "
         values.append(param[4])
 
     if (param[1]): # coursenum is true
-        stmtStr += 'AND coursenum = ? '
+        param[5] = "%" + param[5] + "%"
+        stmtStr += "AND coursenum LIKE ? "
         values.append(param[5])
 
     if (param[2]): # area is true
-        stmtStr += 'AND area = ? '
+        param[6] = "%" + param[6] + "%"
+        stmtStr += "AND area LIKE ? "
         values.append(param[6])
 
     if (param[3]): # title is true
-        stmtStr += 'AND title = ? '
+        param[7] = "%" + param[7] + "%"
+        stmtStr += "AND title LIKE ? "
         values.append(param[7])
 
     cursor.execute(stmtStr, values)
