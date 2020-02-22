@@ -2,7 +2,7 @@
 
 # -----------------------------------------------------------------------
 # reg.py
-# Author: Bob Dondero
+# Author: Edward and Bharat
 # -----------------------------------------------------------------------
 
 from os import path
@@ -80,6 +80,14 @@ def selectStr(param):
 
     return stmtStr
 
+def outputStr(row):
+    print('Class ID:', str(row[0]))
+    print('Class Dept:', str(row[1]))
+    print('Course Num:', str(row[2]))
+    print('Area:', str(row[3]))
+    print('Title:', str(row[4]))
+    print()
+
 def main(argv):
     DATABASE_NAME = 'reg.sqlite'
 
@@ -117,10 +125,7 @@ def main(argv):
 
     row = cursor.fetchone()
     while row is not None:
-        print('Class ID:', str(row[0]))
-        print('Class Title:', str(row[1]))
-        print('Quantity:', str(row[2]))
-        print()
+        outputStr(row)
         row = cursor.fetchone()
 
     cursor.close()
