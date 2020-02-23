@@ -9,7 +9,6 @@ from os import path
 from sys import argv, stderr, exit
 from sqlite3 import connect
 
-
 def buildStr(argv):
     print(argv)
     # details = ''
@@ -35,20 +34,19 @@ def buildStr(argv):
 
 def selectStr():
     # Create a prepared statement and substitute values.
-    stmtStr = 'SELECT ' + \
-              'classes.courseid, classes.days, classes.starttime, classes.endtime, classes.bldg, ' + \
-              'classes.roomnum, ' + \
-              'crosslistings.courseid, crosslistings.coursenum, crosslistings.dept,' + \
-              'courses.area, courses.title, courses.courseid,courses.description ,courses.prereqs,' + \
-              'profs.profid, profs.profname' + \
-              'FROM classes, crosslistings, courses, courseprofs, profs' + \
-              'WHERE classes.courseid = courses.courseid' + \
-              'AND classes.courseid = crosslistings.courseid' + \
-              'AND classes.courseid = courseprofs.courseid' + \
-              'AND courseprofs.profid = profs.profid ' + \
-              'AND classes.classid = ? '
-    return stmtStr
+    stmtStr = 'Select ' +\
+        'c.bldg,c.classid,c.courseid,c.days,c.endtime,c.roomnum,c.starttime, ' +\
+        'cl.courseid,cl.coursenum, cl.dept, ' +\
+        'cr.area,cr.title, cr.courseid,cr.descrip,cr.prereqs, ' +\
+        'p.profid, p.profname '+\
+        'FROM classes c, crosslistings cl, courses cr, coursesprofs cp, profs p ' +\
+        'WHERE c.courseid = cr.courseid ' +\
+        'AND c.courseid = cl.courseid ' +\
+        'AND c.courseid = cp.courseid ' +\
+        'AND cp.profid = p.profid ' +\
+        'AND c.classid = ?'
 
+    return stmtStr
 
 def outputStr(row):
     print('Class ID:', str(row[0]))
@@ -84,12 +82,15 @@ def main(argv):
 
     stmtStr = selectStr()
     if argv[1] == '-h':
-        cursor.execute(stmtStr, argv[2])
+        values = argv[2]
+        cursor.execute(stmtStr, [values])
     else:
-        cursor.execute(stmtStr, argv[1])
+        values = argv[1]
+        cursor.execute(stmtStr, [values])
+        print(stmtStr)
 
-    stmtStr += 'ORDER BY coursenum '
-
+    stmtStr += 'ORDER BY COURSENUM '
+    
 
     row = cursor.fetchone()
     while row is not None:
