@@ -12,7 +12,6 @@ from sqlite3 import connect
 
 # -----------------------------------------------------------------------
 def buildStr(argv):
-    print(argv)
     dept = coursenum = area = title = loopskip = 0
     deptVal = coursenumVal = areaVal = titleVal = ''
     length = len(argv)
@@ -30,7 +29,6 @@ def buildStr(argv):
             try:
                 deptVal = argv[i + 1]
                 loopskip = 1
-                print(deptVal)
                 continue
             except:
                 print('reg: missing value')
@@ -42,7 +40,6 @@ def buildStr(argv):
             try:
                 coursenumVal = argv[i + 1]
                 loopskip = 1
-                print(coursenumVal)
                 continue
             except:
                 print('reg: missing value')
@@ -54,7 +51,6 @@ def buildStr(argv):
             try:
                 areaVal = argv[i + 1]
                 loopskip = 1
-                print(areaVal)
                 continue
             except:
                 print('reg: missing value')
@@ -66,7 +62,6 @@ def buildStr(argv):
             try:
                 titleVal = argv[i + 1]
                 loopskip = 1
-                print(titleVal)
                 continue
             except:
                 print('reg: missing value')
@@ -105,8 +100,8 @@ def stdStr(row):
              str(row[1]) + '\t' + \
              str(row[2]) + '\t' + \
              str(row[3]) + '\t' + \
-             str(row[4]) + '\t'
-    print(output)
+             str(row[4])
+    return(output)
 
 
 def main(argv):
@@ -154,12 +149,16 @@ def main(argv):
 
     cursor.execute(stmtStr, values)
 
+    if len(argv) > 1 and argv[1] == '-h':
+        print('ID:\tDept:\tNum:\tArea:\tTitle:')
     row = cursor.fetchone()
     while row is not None:
-        if argv[1] == '-h':
-            outputStr(row)
-        else:
-            stdStr(row)
+        output = stdStr(row)
+        if len(argv) > 1 and argv[1] == '-h' and len(output) > 72:
+            concat = output.rfind(' ', 0, 68)
+            output = output[0:concat]
+            output = output + ' ... '
+        print(output)
         row = cursor.fetchone()
 
     cursor.close()

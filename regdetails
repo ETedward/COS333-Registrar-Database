@@ -9,65 +9,104 @@ from os import path
 from sys import argv, stderr, exit
 from sqlite3 import connect
 
-def buildStr(argv):
-    print(argv)
-    # details = ''
-    length = len(argv)
-    for i in range(length):
-        if loopskip or i == 0:
-            loopskip = 0
-            continue
-        if argv[i] == '-h' and i == 1:
-            continue
-        try:
-            details = argv[i + 1]
-            loopskip = 1
-            continue
-        except:
-            print('reg: missing value')
-            exit(1)
 
-        print(argv[i])
+def errorcheck(argv):
+    if len(argv) < 2:
+        raise NameError
+    if len(argv) < 3 and argv[1] == '-h':
+        raise NameError
+
+    if argv[1] == '-h':
+        if len(argv) > 3:
+            raise SyntaxError
+        if not isinstance(int(argv[2]), int):
+            raise ValueError
+    elif len(argv) > 2:
         raise SyntaxError
-    return classid
+    elif not isinstance(int(argv[1]), int):
+        raise ValueError
 
 
-def selectStr():
+def selectStr1():
     # Create a prepared statement and substitute values.
     stmtStr = 'Select ' +\
-        'c.bldg,c.classid,c.courseid,c.days,c.endtime,c.roomnum,c.starttime, ' +\
-        'cl.courseid,cl.coursenum, cl.dept, ' +\
-        'cr.area,cr.title, cr.courseid,cr.descrip,cr.prereqs, ' +\
-        'p.profid, p.profname '+\
-        'FROM classes c, crosslistings cl, courses cr, coursesprofs cp, profs p ' +\
+        'c.courseid,c.days,c.starttime,c.endtime,c.bldg,c.roomnum,' +\
+        'cl.courseid,cl.dept,cl.coursenum, ' +\
+        'cr.area,cr.title, cr.descrip,cr.prereqs,cr.courseid ' +\
+        'FROM classes c, crosslistings cl, courses cr ' +\
         'WHERE c.courseid = cr.courseid ' +\
         'AND c.courseid = cl.courseid ' +\
-        'AND c.courseid = cp.courseid ' +\
+        'AND c.classid = ?' +\
+        'ORDER BY dept '
+    return stmtStr
+
+
+def selectStr2():
+    # Create a prepared statement and substitute values.
+    stmtStr = 'Select ' +\
+        'c.courseid,' +\
+        'p.profid, p.profname '+\
+        'FROM classes c, coursesprofs cp, profs p ' +\
+        'WHERE c.courseid = cp.courseid ' +\
         'AND cp.profid = p.profid ' +\
-        'AND c.classid = ?'
+        'AND c.classid = ?' +\
+        'ORDER BY profname'
 
     return stmtStr
 
+
 def outputStr(row):
-    print('Class ID:', str(row[0]))
-    print('Class Dept:', str(row[1]))
-    print('Course Num:', str(row[2]))
-    print('Area:', str(row[3]))
-    title = 'Title: ' + str(row[4])
-    if len(title) > 72:
-        concat = title.rfind(' ', 0, 68)
-        title = title[0:concat]
-        title = title + ' ... '
-    print(title)
-    print()
+    output = ''
+    if len(row) == 2:
+        output = 'Dept and Number: ' + str(row[0]) + ' ' + \
+                 str(row[1])
+    elif len(row) == 4:
+        print('Area: ' + str(row[0]))
+        title = 'Title: ' + str(row[1])
+        while len(title) > 72:
+            newline = title.rfind(' ', 0, 73)
+            print(title[:newline])
+            title = title[72:]
+        print(title + '\n')
+        desc = 'Description: ' + str(row[2])
+        while len(desc) > 72:
+            newline = desc.rfind(' ', 0, 73)
+            print(desc[:newline])
+            desc = desc[newline+1:]
+        print(desc + '\n')
+        prereq = 'Prerequisites:: ' + str(row[3])
+        while len(prereq) > 72:
+            newline = prereq.rfind(' ', 0, 73)
+            print(prereq[:newline])
+            prereq = prereq[newline + 1:]
+        print(prereq + '\n')
+        return
+    else:
+        output = 'Course Id: ' + str(row[0]) + '\n\n' + \
+                 'Days: ' + str(row[1]) + '\n' + \
+                 'Start time: ' + str(row[2]) + '\n' + \
+                 'End time: ' + str(row[3]) + '\n' + \
+                 'Building: ' + str(row[4]) + '\n' + \
+                 'Room: ' + str(row[5] + '\n')
+    print(output)
 
 
 def stdStr(row):
-    output = str(row[0]) + '\t' + \
-             str(row[1]) + '\t' + \
-             str(row[2]) + '\t' + \
-             str(row[3]) + '\t' + \
-             str(row[4]) + '\t'
+    if len(row) == 2:
+        output = str(row[0]) + ' ' + \
+                 str(row[1])
+    elif len(row) == 4:
+        output = str(row[0]) + '\n' + \
+                 str(row[1]) + '\n' + \
+                 str(row[2]) + '\n' + \
+                 str(row[3])
+    else:
+        output = str(row[0]) + '\n' + \
+                 str(row[1]) + '\n' + \
+                 str(row[2]) + '\n' + \
+                 str(row[3]) + '\n' + \
+                 str(row[4]) + '\n' + \
+                 str(row[5])
     print(output)
 
 
@@ -77,29 +116,64 @@ def main(argv):
     if not path.isfile(DATABASE_NAME):
         raise Exception('regdetails: database reg.sqlite not found')
 
+    try:
+        errorcheck(argv)
+    except NameError:
+        print('regdetails: missing classid')
+        exit(1)
+    except SyntaxError:
+        print('regdetails: too many arguments')
+        exit(1)
+    except ValueError:
+        print('regdetails: classid is not an integer')
+        exit(1)
+
     connection = connect(DATABASE_NAME)
     cursor = connection.cursor()
 
-    stmtStr = selectStr()
+    stmtStr = selectStr1()
     if argv[1] == '-h':
         values = argv[2]
         cursor.execute(stmtStr, [values])
     else:
         values = argv[1]
         cursor.execute(stmtStr, [values])
-        print(stmtStr)
-
-    stmtStr += 'ORDER BY COURSENUM '
-    
 
     row = cursor.fetchone()
-    while row is not None:
+
+    try:
         if argv[1] == '-h':
             outputStr(row)
         else:
             stdStr(row)
+    except TypeError:
+        print('regdetails: classid does not exist')
+        exit(1)
+
+    while row is not None:
+        if argv[1] == '-h':
+            outputStr(row[7:9])
+        else:
+            stdStr(row[7:9])
+        row2 = row
         row = cursor.fetchone()
 
+    if argv[1] == '-h':
+        print('\n')
+        outputStr(row2[9:13])
+    else:
+        stdStr(row2[9:13])
+
+    stmtStr = selectStr2()
+    cursor.execute(stmtStr, [values])
+
+    row = cursor.fetchone()
+    while row is not None:
+        if argv[1] == '-h':
+            print('Professor: ' + row[2])
+        else:
+            print(row[2])
+        row = cursor.fetchone()
     cursor.close()
     connection.close()
 
