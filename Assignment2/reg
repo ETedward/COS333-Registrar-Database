@@ -9,13 +9,17 @@ from os import path
 from sys import argv, stderr, exit
 from sqlite3 import connect
 
+#import GUI widgets
+from sys import exit
+from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
+from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget
+from PyQt5.QtWidgets import QTextEdit, QMessageBox
 
 # -----------------------------------------------------------------------
 def buildStr(argv):
     dept = coursenum = area = title = loopskip = 0
     deptVal = coursenumVal = areaVal = titleVal = ''
     length = len(argv)
-    token = [length]
     for i in range(length):
         if loopskip or i == 0:
             loopskip = 0
@@ -103,8 +107,7 @@ def stdStr(row):
              str(row[4])
     return(output)
 
-
-def main(argv):
+def managedb(argv):
     DATABASE_NAME = 'reg.sqlite'
 
     if not path.isfile(DATABASE_NAME):
@@ -163,6 +166,39 @@ def main(argv):
 
     cursor.close()
     connection.close()
+
+
+def main(argv):
+    app = QApplication([])
+    button = QPushButton('Search Courses')
+
+    textEdit = QTextEdit()
+
+    layout = QGridLayout()
+    layout.addWidget(button, 0, 0)
+    layout.addWidget(textEdit, 1, 0)
+    layout.setRowStretch(0, 0)
+    layout.setRowStretch(1, 1)
+
+    frame = QFrame()
+    frame.setLayout(layout)
+
+
+    window = QMainWindow()
+    window.setWindowTitle('Search the Course Registrar')
+    window.setCentralWidget(frame)
+    screenSize = QDesktopWidget().screenGeometry()
+    window.resize(screenSize.width() // 2, screenSize.height() // 2)
+
+    def buttonSlot():
+
+        text = 'testing this output!!!'  # Unused!!!
+        textEdit.append(text)
+
+    button.clicked.connect(buttonSlot)
+
+    window.show()
+    exit(app.exec_())
 
 
 if __name__ == '__main__':
