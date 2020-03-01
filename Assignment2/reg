@@ -13,7 +13,7 @@ from sqlite3 import connect
 from sys import exit
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
 from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget
-from PyQt5.QtWidgets import QTextEdit, QMessageBox
+from PyQt5.QtWidgets import QTextEdit, QMessageBox, QLineEdit
 
 # -----------------------------------------------------------------------
 def buildStr(argv):
@@ -174,15 +174,25 @@ def main(argv):
 
     textEdit = QTextEdit()
 
+    LineEdit1 = QLineEdit('0')
+    LineEdit2 = QLineEdit('0')
+    LineEdit3 = QLineEdit('0')
+    LineEdit4 = QLineEdit('0')
+
+
     layout = QGridLayout()
     layout.addWidget(button, 0, 0)
     layout.addWidget(textEdit, 1, 0)
     layout.setRowStretch(0, 0)
     layout.setRowStretch(1, 1)
+    layout.addWidget(LineEdit1, 0, 1)
+    layout.addWidget(LineEdit2, 0, 2)
+    layout.addWidget(LineEdit3, 0, 3)
+    layout.addWidget(LineEdit4, 0, 4)
+
 
     frame = QFrame()
     frame.setLayout(layout)
-
 
     window = QMainWindow()
     window.setWindowTitle('Search the Course Registrar')
