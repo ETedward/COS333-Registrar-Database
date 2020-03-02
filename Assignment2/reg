@@ -13,7 +13,7 @@ from sqlite3 import connect
 from sys import exit
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
 from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget
-from PyQt5.QtWidgets import QTextEdit, QMessageBox, QLineEdit, QLabel
+from PyQt5.QtWidgets import QTextEdit, QLineEdit, QLabel, QListWidget
 
 # -----------------------------------------------------------------------
 def buildStr(argv):
@@ -168,13 +168,14 @@ def managedb(argv):
 
     cursor.close()
     connection.close()
-    return ''.join(sb)
+    return sb
 
 def main(argv):
     app = QApplication([])
     button = QPushButton('Search Courses')
 
-    textEdit = QTextEdit()
+    #textEdit = QTextEdit()
+    listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
     LineEdit2 = QLineEdit('')
@@ -189,7 +190,7 @@ def main(argv):
 
     outputLayout = QGridLayout()
     outputLayout.addWidget(button, 0, 0)
-    outputLayout.addWidget(textEdit, 1, 0)
+    outputLayout.addWidget(listWidget, 1, 0)
     outputFrame = QFrame()
     outputFrame.setLayout(outputLayout)
 
@@ -215,7 +216,6 @@ def main(argv):
     Frame = QFrame()
     Frame.setLayout(FrameLayout)
 
-
     window = QMainWindow()
     window.setWindowTitle('Search the Course Registrar')
     window.setCentralWidget(Frame)
@@ -223,6 +223,7 @@ def main(argv):
     window.resize(screenSize.width() // 2, screenSize.height() // 2)
 
     def buttonSlot():
+        listWidget.clear()
         args = [argv[0]]
         args.append("-h")
         if LineEdit1.text() != '':
@@ -238,13 +239,19 @@ def main(argv):
             args.append('-title')
             args.append(LineEdit4.text())
 
-        textEdit.append(managedb(args))
+        #textEdit.append(managedb(args))
+        output = managedb(args)
+        for item in output:
+            listWidget.addItem(item)
 
     button.clicked.connect(buttonSlot)
+    LineEdit1.
+    LineEdit2.returnPressed(buttonSlot())
+    LineEdit3.returnPressed(buttonSlot())
+    LineEdit4.returnPressed(buttonSlot())
 
     window.show()
     exit(app.exec_())
-
 
 if __name__ == '__main__':
     main(argv)
