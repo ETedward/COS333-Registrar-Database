@@ -13,7 +13,7 @@ from sqlite3 import connect
 from sys import exit
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
 from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget
-from PyQt5.QtWidgets import QTextEdit, QMessageBox, QLineEdit
+from PyQt5.QtWidgets import QTextEdit, QMessageBox, QLineEdit, QLabel
 
 # -----------------------------------------------------------------------
 def buildStr(argv):
@@ -171,39 +171,76 @@ def managedb(argv):
 def main(argv):
     app = QApplication([])
     button = QPushButton('Search Courses')
+    button.add
 
     textEdit = QTextEdit()
 
-    LineEdit1 = QLineEdit('0')
-    LineEdit2 = QLineEdit('0')
-    LineEdit3 = QLineEdit('0')
-    LineEdit4 = QLineEdit('0')
+    LineEdit1 = QLineEdit('')
+    LineEdit2 = QLineEdit('')
+    LineEdit3 = QLineEdit('')
+    LineEdit4 = QLineEdit('')
+
+    deptLabel = QLabel('Department:')
+    coursenumLabel = QLabel('Course Num:')
+    areaLabel = QLabel('Area:')
+    titleLabel = QLabel('Title:')
 
 
-    layout = QGridLayout()
-    layout.addWidget(button, 0, 0)
-    layout.addWidget(textEdit, 1, 0)
-    layout.setRowStretch(0, 0)
-    layout.setRowStretch(1, 1)
-    layout.addWidget(LineEdit1, 0, 1)
-    layout.addWidget(LineEdit2, 0, 2)
-    layout.addWidget(LineEdit3, 0, 3)
-    layout.addWidget(LineEdit4, 0, 4)
+    outputLayout = QGridLayout()
+    outputLayout.addWidget(button, 0, 0)
+    outputLayout.addWidget(textEdit, 1, 0)
+    outputFrame = QFrame()
+    outputFrame.setLayout(outputLayout)
+
+    inputLayout = QGridLayout()
+    inputLayout.addWidget(deptLabel, 0, 1)
+    inputLayout.addWidget(coursenumLabel, 1, 1)
+    inputLayout.addWidget(areaLabel, 2, 1)
+    inputLayout.addWidget(titleLabel, 3, 1)
+    inputLayout.addWidget(LineEdit1, 0, 2)
+    inputLayout.addWidget(LineEdit2, 1, 2)
+    inputLayout.addWidget(LineEdit3, 2, 2)
+    inputLayout.addWidget(LineEdit4, 3, 2)
+    inputFrame = QFrame()
+    inputFrame.setLayout(inputLayout)
 
 
-    frame = QFrame()
-    frame.setLayout(layout)
+
+
+    FrameLayout = QGridLayout()
+    FrameLayout.setSpacing(0)
+    FrameLayout.setContentsMargins(0, 0, 0, 0)
+    FrameLayout.setRowStretch(0, 1)
+    FrameLayout.setColumnStretch(0, 1)
+    FrameLayout.addWidget(outputFrame, 0, 1)
+    FrameLayout.addWidget(inputFrame, 0, 0)
+    Frame = QFrame()
+    Frame.setLayout(FrameLayout)
+
 
     window = QMainWindow()
     window.setWindowTitle('Search the Course Registrar')
-    window.setCentralWidget(frame)
+    window.setCentralWidget(Frame)
     screenSize = QDesktopWidget().screenGeometry()
     window.resize(screenSize.width() // 2, screenSize.height() // 2)
 
     def buttonSlot():
+        args = [argv[0]]
+        if LineEdit1.text() != '':
+            args.append('-dept')
+            args.append(LineEdit1.text())
+        if LineEdit2.text() != '':
+            args.append('-coursenum')
+            args.append(LineEdit2.text())
+        if LineEdit3.text() != '':
+            args.append('-area')
+            args.append(LineEdit3.text())
+        if LineEdit4.text() != '':
+            args.append('-title')
+            args.append(LineEdit4.text())
 
-        text = 'testing this output!!!'  # Unused!!!
-        textEdit.append(text)
+        managedb(args)
+        textEdit.append(args[0])
 
     button.clicked.connect(buttonSlot)
 
