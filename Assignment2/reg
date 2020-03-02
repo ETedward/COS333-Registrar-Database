@@ -13,7 +13,8 @@ from sqlite3 import connect
 from sys import exit
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
 from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget
-from PyQt5.QtWidgets import QTextEdit, QLineEdit, QLabel, QListWidget
+from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget
+
 
 # -----------------------------------------------------------------------
 def buildStr(argv):
@@ -158,10 +159,10 @@ def managedb(argv):
     row = cursor.fetchone()
     while row is not None:
         output = stdStr(row)
-        if len(argv) > 1 and argv[1] == '-h' and len(output) > 72:
-            concat = output.rfind(' ', 0, 68)
-            output = output[0:concat]
-            output = output + ' ... '
+        # if len(argv) > 1 and argv[1] == '-h' and len(output) > 100:
+        #     concat = output.rfind(' ', 0, 68)
+        #     output = output[0:concat]
+        #     output = output + ' ... '
 
         sb.append(output)
         row = cursor.fetchone()
@@ -189,6 +190,8 @@ def main(argv):
 
 
     outputLayout = QGridLayout()
+    outputLayout.setRowStretch(0, 0)
+    outputLayout.setColumnStretch(0, 0)
     outputLayout.addWidget(button, 0, 0)
     outputLayout.addWidget(listWidget, 1, 0)
     outputFrame = QFrame()
@@ -207,12 +210,11 @@ def main(argv):
     inputFrame.setLayout(inputLayout)
 
     FrameLayout = QGridLayout()
-    FrameLayout.setSpacing(0)
     FrameLayout.setContentsMargins(0, 0, 0, 0)
     FrameLayout.setRowStretch(0, 1)
     FrameLayout.setColumnStretch(0, 1)
-    FrameLayout.addWidget(outputFrame, 0, 1)
-    FrameLayout.addWidget(inputFrame, 0, 0)
+    FrameLayout.addWidget(outputFrame, 0, 0)
+    FrameLayout.addWidget(inputFrame, 0, 1)
     Frame = QFrame()
     Frame.setLayout(FrameLayout)
 
@@ -245,10 +247,10 @@ def main(argv):
             listWidget.addItem(item)
 
     button.clicked.connect(buttonSlot)
-    LineEdit1.
-    LineEdit2.returnPressed(buttonSlot())
-    LineEdit3.returnPressed(buttonSlot())
-    LineEdit4.returnPressed(buttonSlot())
+    LineEdit1.returnPressed.connect(buttonSlot)
+    LineEdit2.returnPressed.connect(buttonSlot)
+    LineEdit3.returnPressed.connect(buttonSlot)
+    LineEdit4.returnPressed.connect(buttonSlot)
 
     window.show()
     exit(app.exec_())
