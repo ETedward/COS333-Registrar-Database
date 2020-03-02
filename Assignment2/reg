@@ -86,18 +86,18 @@ def selectStr(param):
 
 
 def outputStr(row):
-    print('Class ID:', str(row[0]))
-    print('Class Dept:', str(row[1]))
-    print('Course Num:', str(row[2]))
-    print('Area:', str(row[3]))
+    sb = []
+    sb.append('Class ID:' + str(row[0]))
+    sb.append('Class Dept:' + str(row[1]))
+    sb.append('Course Num:'+ str(row[2]))
+    sb.append('Area:' + str(row[3]))
     title = 'Title: ' + str(row[4])
     if len(title) > 72:
         concat = title.rfind(' ', 0, 68)
         title = title[0:concat]
         title = title + ' ... '
-    print(title)
-    print()
-
+    sb.append(title)
+    return ''.join(sb)
 
 def stdStr(row):
     output = str(row[0]) + '\t' + \
@@ -109,6 +109,7 @@ def stdStr(row):
 
 def managedb(argv):
     DATABASE_NAME = 'reg.sqlite'
+    sb = []
 
     if not path.isfile(DATABASE_NAME):
         raise Exception('reg: database reg.sqlite not found')
@@ -161,17 +162,17 @@ def managedb(argv):
             concat = output.rfind(' ', 0, 68)
             output = output[0:concat]
             output = output + ' ... '
-        print(output)
+
+        sb.append(output)
         row = cursor.fetchone()
 
     cursor.close()
     connection.close()
-
+    return ''.join(sb)
 
 def main(argv):
     app = QApplication([])
     button = QPushButton('Search Courses')
-    button.add
 
     textEdit = QTextEdit()
 
@@ -204,9 +205,6 @@ def main(argv):
     inputFrame = QFrame()
     inputFrame.setLayout(inputLayout)
 
-
-
-
     FrameLayout = QGridLayout()
     FrameLayout.setSpacing(0)
     FrameLayout.setContentsMargins(0, 0, 0, 0)
@@ -226,6 +224,7 @@ def main(argv):
 
     def buttonSlot():
         args = [argv[0]]
+        args.append("-h")
         if LineEdit1.text() != '':
             args.append('-dept')
             args.append(LineEdit1.text())
@@ -239,8 +238,7 @@ def main(argv):
             args.append('-title')
             args.append(LineEdit4.text())
 
-        managedb(args)
-        textEdit.append(args[0])
+        textEdit.append(managedb(args))
 
     button.clicked.connect(buttonSlot)
 
