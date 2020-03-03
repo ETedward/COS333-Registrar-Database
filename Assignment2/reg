@@ -13,8 +13,7 @@ from sqlite3 import connect
 from sys import exit
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
 from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget
-from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget
-
+from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
 
 # -----------------------------------------------------------------------
 def buildStr(argv):
@@ -174,8 +173,6 @@ def managedb(argv):
 def main(argv):
     app = QApplication([])
     button = QPushButton('Search Courses')
-
-    #textEdit = QTextEdit()
     listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
@@ -241,10 +238,16 @@ def main(argv):
             args.append('-title')
             args.append(LineEdit4.text())
 
-        #textEdit.append(managedb(args))
         output = managedb(args)
         for item in output:
             listWidget.addItem(item)
+
+        def handleClick():
+           reply = QMessageBox.question(window, 'My title', 'My message')
+           print("whiiii!2")
+
+        listWidget.itemActivated.connect(handleClick)
+        window.show()
 
     button.clicked.connect(buttonSlot)
     LineEdit1.returnPressed.connect(buttonSlot)
@@ -257,3 +260,4 @@ def main(argv):
 
 if __name__ == '__main__':
     main(argv)
+
