@@ -8,11 +8,12 @@
 from os import path
 from sys import argv, stderr, exit
 from sqlite3 import connect
+import regdetails
 
 #import GUI widgets
 from sys import exit
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
-from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget
+from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget, QListWidgetItem
 from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
 
 # -----------------------------------------------------------------------
@@ -100,10 +101,10 @@ def outputStr(row):
     return ''.join(sb)
 
 def stdStr(row):
-    output = str(row[0]) + '\t' + \
-             str(row[1]) + '\t' + \
-             str(row[2]) + '\t' + \
-             str(row[3]) + '\t' + \
+    output = str(row[0]) + '  \t' + \
+             str(row[1]) + '\t\t' + \
+             str(row[2]) + '\t\t' + \
+             str(row[3]) + '\t\t' + \
              str(row[4])
     return(output)
 
@@ -153,8 +154,6 @@ def managedb(argv):
 
     cursor.execute(stmtStr, values)
 
-    if len(argv) > 1 and argv[1] == '-h':
-        print('ID:\tDept:\tNum:\tArea:\tTitle:')
     row = cursor.fetchone()
     while row is not None:
         output = stdStr(row)
@@ -243,8 +242,11 @@ def main(argv):
             listWidget.addItem(item)
 
         def handleClick():
-           reply = QMessageBox.question(window, 'My title', 'My message')
-           print("whiiii!2")
+            item = listWidget.currentItem()
+            text = item.text()
+            itemcoursenum = text[0:text.index('\t')]
+            finalStr = regdetails.runDetails(['regdetails', '-h', itemcoursenum])
+            reply = QMessageBox.information(window, 'My title', finalStr)
 
         listWidget.itemActivated.connect(handleClick)
         window.show()
@@ -257,6 +259,7 @@ def main(argv):
 
     window.show()
     exit(app.exec_())
+
 
 if __name__ == '__main__':
     main(argv)
