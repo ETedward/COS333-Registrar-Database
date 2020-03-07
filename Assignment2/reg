@@ -22,16 +22,32 @@ from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
 
 # -----------------------------------------------------------------------
 
-def stdStr(row):
-    output = str(row[0]) + '  \t' + \
-             str(row[1]) + '\t\t' + \
-             str(row[2]) + '\t\t' + \
-             str(row[3]) + '\t\t' + \
-             str(row[4])
-    return output
-
-
 def main(argv):
+
+    if len(argv) != 3:
+        print('Usage: python %s host port' % argv[0])
+        exit(1)
+
+    try:
+        host = argv[1]
+        port = int(argv[2])
+
+        sock = socket(AF_INET, SOCK_STREAM)
+        sock.connect((host, port))
+        flo = sock.makefile(mode = 'rb')
+
+        flo = sock.makefile(mode = 'wr')
+
+        output = load(flo)
+
+        sock.close()
+
+        for outputa in output:
+            print(outputa)
+
+    except Exception as e:
+        print(e, file=stderr)
+
     app = QApplication([])
     button = QPushButton('Search Courses')
     listWidget = QListWidget()
@@ -45,7 +61,6 @@ def main(argv):
     coursenumLabel = QLabel('Course Num:')
     areaLabel = QLabel('Area:')
     titleLabel = QLabel('Title:')
-
 
     outputLayout = QGridLayout()
     outputLayout.setRowStretch(0, 0)
@@ -99,9 +114,11 @@ def main(argv):
             args.append('-title')
             args.append(LineEdit4.text())
 
-        output = managedb(args)
+        #output = managedb(args)
+
         for item in output:
             listWidget.addItem(item)
+
 
         def handleClick():
             item = listWidget.currentItem()
@@ -121,7 +138,6 @@ def main(argv):
 
     window.show()
     exit(app.exec_())
-
 
 if __name__ == '__main__':
     main(argv)
