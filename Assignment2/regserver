@@ -12,7 +12,6 @@ from socket import AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from pickle import dump
 
 
-
 def buildStr(argv):
     dept = coursenum = area = title = loopskip = 0
     deptVal = coursenumVal = areaVal = titleVal = ''
@@ -173,3 +172,11 @@ def managedb(argv):
     cursor.close()
     connection.close()
     return sb
+
+def stdStr(row):
+    output = str(row[0]) + '  \t' + \
+             str(row[1]) + '\t\t' + \
+             str(row[2]) + '\t\t' + \
+             str(row[3]) + '\t\t' + \
+             str(row[4])
+    return output
