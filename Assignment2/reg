@@ -17,6 +17,8 @@ from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget, QListWidgetItem
 from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
 
 # -----------------------------------------------------------------------
+
+
 def buildStr(argv):
     dept = coursenum = area = title = loopskip = 0
     deptVal = coursenumVal = areaVal = titleVal = ''
@@ -100,13 +102,15 @@ def outputStr(row):
     sb.append(title)
     return ''.join(sb)
 
+
 def stdStr(row):
     output = str(row[0]) + '  \t' + \
              str(row[1]) + '\t\t' + \
              str(row[2]) + '\t\t' + \
              str(row[3]) + '\t\t' + \
              str(row[4])
-    return(output)
+    return output
+
 
 def managedb(argv):
     DATABASE_NAME = 'reg.sqlite'
@@ -131,26 +135,50 @@ def managedb(argv):
     stmtStr = selectStr(param)
     values = []
     if param[0]:  # dept is true
+        if '%' in param[4]:
+            index = param[4].find('%')
+            param[4] = param[4][:index] + '/' + param[4][index:]
+        if '_' in param[4]:
+            index = param[4].find('_')
+            param[4] = param[4][:index] + '/' + param[4][index:]
         param[4] = "%" + param[4] + "%"
         stmtStr += "AND dept LIKE ? "
         values.append(param[4])
 
     if param[1]:  # coursenum is true
+        if '%' in param[5]:
+            index = param[5].find('%')
+            param[5] = param[5][:index] + '/' + param[5][index:]
+        if '_' in param[5]:
+            index = param[5].find('_')
+            param[5] = param[5][:index] + '/' + param[5][index:]
         param[5] = "%" + param[5] + "%"
         stmtStr += "AND coursenum LIKE ? "
         values.append(param[5])
 
     if param[2]:  # area is true
+        if '%' in param[6]:
+            index = param[6].find('%')
+            param[6] = param[6][:index] + '/' + param[6][index:]
+        if '_' in param[6]:
+            index = param[6].find('_')
+            param[6] = param[6][:index] + '/' + param[6][index:]
         param[6] = "%" + param[6] + "%"
         stmtStr += "AND area LIKE ? "
         values.append(param[6])
 
     if param[3]:  # title is true
+        if '%' in param[7]:
+            index = param[7].find('%')
+            param[7] = param[7][:index] + '/' + param[7][index:]
+        if '_' in param[7]:
+            index = param[7].find('_')
+            param[7] = param[7][:index] + '/' + param[7][index:]
         param[7] = "%" + param[7] + "%"
         stmtStr += "AND title LIKE ? "
         values.append(param[7])
 
-    stmtStr += 'ORDER BY coursenum '
+    stmtStr += 'ORDER BY dept, coursenum, classid '
 
     cursor.execute(stmtStr, values)
 
@@ -168,6 +196,7 @@ def managedb(argv):
     cursor.close()
     connection.close()
     return sb
+
 
 def main(argv):
     app = QApplication([])
