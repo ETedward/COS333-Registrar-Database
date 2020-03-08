@@ -107,8 +107,6 @@ def main(argv):
             output = load(floread)
             sock.close()
 
-            for outputa in output:
-                print(outputa)
 
         except Exception as e:
             print(e, file=stderr)
@@ -135,8 +133,6 @@ def main(argv):
                 finalStr = load(floread)
                 sock.close()
 
-                for outputa in output:
-                    print(outputa)
 
             except Exception as e:
                 print(e, file=stderr)

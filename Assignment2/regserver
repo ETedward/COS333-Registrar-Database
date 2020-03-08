@@ -189,17 +189,17 @@ def stdStr(row):
 
 # -----------------------------------------------------------------------
 
-def handleClientreg(floread):
+def handleClientreg(allvars):
 
-    finaloutput = managedb(floread)
+    finaloutput = managedb(allvars)
     return finaloutput
 
 # -----------------------------------------------------------------------
 
 
-def handleClientregdetails(floread):
+def handleClientregdetails(allvars):
 
-    finaloutput = regdetails.runDetails(floread)
+    finaloutput = regdetails.runDetails(allvars)
     return finaloutput
 
 
@@ -231,10 +231,10 @@ def main(argv):
                 allvars = load(floread)
                 if allvars[0] == 'reg':
                     print('Received command: getOverviews')
-                    output = handleClientreg(floread)
+                    output = handleClientreg(allvars)
                 elif allvars[0] == 'regdetails':
                     print('Received command: getDetails')
-                    output = handleClientregdetails(floread)
+                    output = handleClientregdetails(allvars)
 
                 flowrite = sock.makefile(mode='wb')
                 dump(output, flowrite)
