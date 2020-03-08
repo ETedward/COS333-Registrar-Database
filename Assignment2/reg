@@ -27,7 +27,7 @@ def main(argv):
         exit(1)
 
     app = QApplication([])
-    button = QPushButton('Search Courses')
+    button = QPushButton('Submit')
     listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
@@ -36,14 +36,14 @@ def main(argv):
     LineEdit4 = QLineEdit('')
 
     deptLabel = QLabel('Department:')
-    coursenumLabel = QLabel('Course Num:')
+    coursenumLabel = QLabel('Number:')
     areaLabel = QLabel('Area:')
     titleLabel = QLabel('Title:')
 
     outputLayout = QGridLayout()
     outputLayout.setRowStretch(0, 0)
     outputLayout.setColumnStretch(0, 0)
-    outputLayout.addWidget(button, 0, 0)
+    #outputLayout.addWidget(button, 0, 0)
     outputLayout.addWidget(listWidget, 1, 0)
     outputFrame = QFrame()
     outputFrame.setLayout(outputLayout)
@@ -57,6 +57,7 @@ def main(argv):
     inputLayout.addWidget(LineEdit2, 1, 2)
     inputLayout.addWidget(LineEdit3, 2, 2)
     inputLayout.addWidget(LineEdit4, 3, 2)
+    inputLayout.addWidget(button,1.5,3)
     inputFrame = QFrame()
     inputFrame.setLayout(inputLayout)
 
@@ -64,13 +65,13 @@ def main(argv):
     FrameLayout.setContentsMargins(0, 0, 0, 0)
     FrameLayout.setRowStretch(0, 1)
     FrameLayout.setColumnStretch(0, 1)
-    FrameLayout.addWidget(outputFrame, 0, 0)
-    FrameLayout.addWidget(inputFrame, 0, 1)
+    FrameLayout.addWidget(outputFrame, 1, 0)
+    FrameLayout.addWidget(inputFrame, 0, 0)
     Frame = QFrame()
     Frame.setLayout(FrameLayout)
 
     window = QMainWindow()
-    window.setWindowTitle('Search the Course Registrar')
+    window.setWindowTitle('Princeton University Class Search')
     window.setCentralWidget(Frame)
     screenSize = QDesktopWidget().screenGeometry()
     window.resize(screenSize.width() // 2, screenSize.height() // 2)
