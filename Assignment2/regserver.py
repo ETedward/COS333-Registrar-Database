@@ -229,13 +229,14 @@ def main(argv):
                 print('Accepted connection, opened socket')
                 floread = sock.makefile(mode='rb')
                 allvars = load(floread)
-                if allvars[0] == 'reg':
+                if allvars[0] == 'reg.py':
                     print('Received command: getOverviews')
                     output = handleClientreg(allvars)
-                elif allvars[0] == 'regdetails':
+                elif allvars[0] == 'regdetails.py':
                     print('Received command: getDetails')
                     output = handleClientregdetails(allvars)
-
+                else:
+                    output = ''
                 flowrite = sock.makefile(mode='wb')
                 dump(output, flowrite)
                 flowrite.flush()

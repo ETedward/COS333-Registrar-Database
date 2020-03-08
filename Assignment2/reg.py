@@ -125,8 +125,6 @@ def main(argv):
 
         for item in output:
             listWidget.addItem(item)
-
-        listWidget.itemActivated.connect(handleClick)
         window.show()
 
 
@@ -134,7 +132,7 @@ def main(argv):
         item = listWidget.currentItem()
         text = item.text()
         itemcoursenum = text[0:text.index('\t')]
-        detailargs = ['regdetails', '-h', itemcoursenum]
+        detailargs = ['regdetails.py', '-h', itemcoursenum]
         print('Sent command: getDetail')
         try:
             host = argv[1]
@@ -153,16 +151,18 @@ def main(argv):
         except Exception as e:
             print(e, file=stderr)
 
-        reply = QMessageBox.information(window, 'My title', finalStr)
+        reply = QMessageBox.information(window, 'Class Details', finalStr)
 
     button.clicked.connect(buttonSlot)
     LineEdit1.returnPressed.connect(buttonSlot)
     LineEdit2.returnPressed.connect(buttonSlot)
     LineEdit3.returnPressed.connect(buttonSlot)
     LineEdit4.returnPressed.connect(buttonSlot)
+    listWidget.itemActivated.connect(handleClick)
 
     window.show()
     exit(app.exec_())
+
 
 if __name__ == '__main__':
     main(argv)
