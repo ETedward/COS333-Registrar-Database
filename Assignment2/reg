@@ -27,7 +27,7 @@ def main(argv):
         exit(1)
 
     app = QApplication([])
-    button = QPushButton('Submit')
+    button = QAbstractButton('Submit')
     listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
@@ -49,6 +49,7 @@ def main(argv):
     outputFrame.setLayout(outputLayout)
 
     inputLayout = QGridLayout()
+    inputLayout.setSpacing(0)
     inputLayout.addWidget(deptLabel, 0, 1)
     inputLayout.addWidget(coursenumLabel, 1, 1)
     inputLayout.addWidget(areaLabel, 2, 1)
@@ -57,16 +58,26 @@ def main(argv):
     inputLayout.addWidget(LineEdit2, 1, 2)
     inputLayout.addWidget(LineEdit3, 2, 2)
     inputLayout.addWidget(LineEdit4, 3, 2)
-    inputLayout.addWidget(button,1.5,3)
     inputFrame = QFrame()
     inputFrame.setLayout(inputLayout)
 
+    submitLayout = QGridLayout()
+    submitLayout.addWidget(button, 0, 0)
+    submitFrame = QFrame()
+    submitFrame.setLayout(submitLayout)
+
+    topLayout = QGridLayout()
+    topLayout.addWidget(inputFrame, 0, 0)
+    topLayout.addWidget(submitFrame, 0, 1)
+    topFrame = QFrame()
+    topFrame.setLayout(topLayout)
+
     FrameLayout = QGridLayout()
     FrameLayout.setContentsMargins(0, 0, 0, 0)
-    FrameLayout.setRowStretch(0, 1)
-    FrameLayout.setColumnStretch(0, 1)
+    FrameLayout.setRowStretch(1, 0)
+    FrameLayout.setColumnStretch(1, 0)
     FrameLayout.addWidget(outputFrame, 1, 0)
-    FrameLayout.addWidget(inputFrame, 0, 0)
+    FrameLayout.addWidget(topFrame, 0, 0)
     Frame = QFrame()
     Frame.setLayout(FrameLayout)
 
