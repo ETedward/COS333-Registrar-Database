@@ -27,7 +27,7 @@ def main(argv):
         exit(1)
 
     app = QApplication([])
-    button = QAbstractButton('Submit')
+    button = QPushButton('Submit')
     listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
@@ -126,33 +126,34 @@ def main(argv):
         for item in output:
             listWidget.addItem(item)
 
-        def handleClick():
-            item = listWidget.currentItem()
-            text = item.text()
-            itemcoursenum = text[0:text.index('\t')]
-            detailargs = ['regdetails', '-h', itemcoursenum]
-            print('Sent command: getDetail')
-            try:
-                host = argv[1]
-                port = int(argv[2])
-
-                sock = socket(AF_INET, SOCK_STREAM)
-                sock.connect((host, port))
-                flowrite = sock.makefile(mode='wb')
-                dump(detailargs, flowrite)
-                flowrite.flush()
-                floread = sock.makefile(mode='rb')
-                finalStr = load(floread)
-                sock.close()
-
-
-            except Exception as e:
-                print(e, file=stderr)
-
-            reply = QMessageBox.information(window, 'My title', finalStr)
-
         listWidget.itemActivated.connect(handleClick)
         window.show()
+
+
+    def handleClick():
+        item = listWidget.currentItem()
+        text = item.text()
+        itemcoursenum = text[0:text.index('\t')]
+        detailargs = ['regdetails', '-h', itemcoursenum]
+        print('Sent command: getDetail')
+        try:
+            host = argv[1]
+            port = int(argv[2])
+
+            sock = socket(AF_INET, SOCK_STREAM)
+            sock.connect((host, port))
+            flowrite = sock.makefile(mode='wb')
+            dump(detailargs, flowrite)
+            flowrite.flush()
+            floread = sock.makefile(mode='rb')
+            finalStr = load(floread)
+            sock.close()
+
+
+        except Exception as e:
+            print(e, file=stderr)
+
+        reply = QMessageBox.information(window, 'My title', finalStr)
 
     button.clicked.connect(buttonSlot)
     LineEdit1.returnPressed.connect(buttonSlot)
