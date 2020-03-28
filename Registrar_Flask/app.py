@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------
 # penny.py
-# Author: Bob Dondero
+# Author: Bharat and Edward
 #-----------------------------------------------------------------------
 
 from sys import argv
@@ -17,13 +17,13 @@ app = Flask(__name__, template_folder='.')
 
 #-----------------------------------------------------------------------
 
-def getAmPm():
-    if strftime('%p') == "AM":
-        return 'morning'
-    return 'afternoon' 
-    
-def getCurrentTime():
-    return asctime(localtime())
+def getReg(argv):
+    if len(argv) != 3:
+        print('Usage: python %s ERROR MSG' % argv[0])
+        exit(1)
+
+    regdetails = CALL_REG_FUNCTION (argv)
+    return regdetails
 
 #-----------------------------------------------------------------------
 
@@ -32,8 +32,7 @@ def getCurrentTime():
 def index():
  
     html = render_template('index.html',
-        ampm=getAmPm(),
-        currentTime=getCurrentTime())
+        var=getReg(argv))
     response = make_response(html)
     return response
     
