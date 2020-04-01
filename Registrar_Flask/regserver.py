@@ -196,7 +196,6 @@ def handleClientreg(allvars):
 
 
 def handleClientregdetails(allvars):
-
     finaloutput = regdetails.runDetails(allvars)
     return finaloutput
 
