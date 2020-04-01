@@ -1,38 +1,15 @@
 <strong> Course Id: </strong>
 
-<h3> this is the : {{output}} </h3>
-<h3> this is the : {{test}} </h3>
-
 <hr>
    <h2>Class Details (class id {{classid}})</h2>
 
-   <strong>Course Id: </strong> 3672<br>
-   <strong>Days: </strong>TTh<br>
-   <strong>Start time: </strong>11:00 AM<br>
-   <strong>End time: </strong>12:20 PM<br>
-   <strong>Building: </strong>FRIEN<br>
-   <strong>Room: </strong>006<br>
+    {% for result in input %}
+        <tr>
+            <td><strong>{{result}}</strong></td>
+            <br>
+        </tr>
+    {% endfor %}
 
    <hr>
-
-   <h2>Course Details (course id 3672)</h2>
-
-       <strong>Dept and Number: </strong>
-       COS 333<br>
-
-   <strong>Area: </strong><br>
-   <strong>Title: </strong>Advanced C%Science Programming Techniques<br>
-   <strong>Description: </strong>This is a course about the practice of programming.  Programming is more than just writing code.  Programmers must also assess tradeoffs, choose among design alternatives, debug and test, improve performance, and maintain software written by themselves &amp; others. At the same time, they must be concerned with compatibility, robustness, and reliability, while meeting specifications.  Students will have the opportunity to develop these skills by working on their own code and in group projects.<br>
-   <strong>Prerequisites: </strong>COS 217 and COS 226.<br>
-
-   <!--
-   <strong>Professor(s): </strong>
-
-
-         Brian W. Kernighan
-
-
-   -->
-
-      <strong>Professor: </strong> Brian W. Kernighan <br>
+   <h2>Course Details (course id )</h2>
    <hr>
