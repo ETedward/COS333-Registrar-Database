@@ -20,6 +20,8 @@ app = Flask(__name__, template_folder='.')
 @app.route('/regdetails', methods=['GET'])
 def handlereg():
     url = request.url
+
+    prev_url = request.cookies.get('prevAddress')
     index = url.find('=')
     classid = url[index + 1:]
     idlist = ["regdetails","-h", classid]
@@ -33,9 +35,11 @@ def handlereg():
     html = render_template('indexreg.html',
                            classid=classid,
                            input1=input[0:6],
-                           input2=input[6:])
+                           input2=input[6:],
+                           prev_url=prev_url)
     response = make_response(html)
     return response
+
 
 @app.route('/', methods=['GET'])
 def index():
@@ -108,6 +112,10 @@ def index():
         response.set_cookie('prevTitle', value=title)
     else:
         response.set_cookie('prevTitle', max_age=0)
+
+    url = request.url
+    print(url)
+    response.set_cookie('prevAddress', value =url)
 
     return response
 
