@@ -1,17 +1,16 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+ <html>
+   <head>
+      <title>Registrar's Office Class Search</title>
+      </head>
+   <body>
+      {% include 'header.html' %}
 
-{% block title %}
-Eddid
-{% endblock %}
+      {% include 'form.html' %}
 
-{% block content %}
-    <header>
-        <h1> Welcome
-        </h1>
-        <p>
-            Here is some fabulous content
-        </p>
+      {% include 'result.html'%}
 
-    </header>
-{% endblock %}
+      {% include 'footer.html' %}
+   </body>
+ </html>
 
