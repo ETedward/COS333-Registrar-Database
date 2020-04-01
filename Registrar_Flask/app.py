@@ -6,7 +6,7 @@
 #-----------------------------------------------------------------------
 
 from sys import argv
-#from database import Database
+from database import Database
 from flask import Flask, request, make_response, redirect, url_for
 from flask import render_template
 
@@ -24,11 +24,17 @@ def index():
     Area = request.args.get('Area')
     Title = request.args.get('Title')
 
+    database = Database()
+    database.connect()
+    results = database.search([Dept,Numb,Area,Title])
+    database.disconnect()
+
     html = render_template('index.html',
                            Dept=Dept,
                            Numb=Numb,
                            Area=Area,
-                           Title=Title)
+                           Title=Title,
+                           results = results)
     response = make_response(html)
     return response
     
