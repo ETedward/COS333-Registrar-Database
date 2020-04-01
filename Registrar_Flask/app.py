@@ -22,18 +22,17 @@ def handlereg():
     url = request.url
     index = url.find('=')
     classid = url[index + 1:]
-    #print(classid)
-    idlist = ["regdetails",classid]
+    idlist = ["regdetails","-h", classid]
     output = regdetails.runDetails(idlist)
+
     print("THIS IS OUTPUT:")
     print(output)
-    #input = output.splitlines()
+    input = output.splitlines()
     print("THIS IS INPUT:")
-    #print(input[0])
-    #print(input[1])
+
     html = render_template('indexreg.html',
-                           classid = classid,
-                           output=output)
+                           output = output,
+                           input = input)
     response = make_response(html)
     return response
 
@@ -69,11 +68,14 @@ def index():
                            result=result)
 
     response = make_response(html)
-    """response.set_cookie('prevDept', dept)
-    response.set_cookie('pCourseNum', coursenum)
-    response.set_cookie('prevArea', area)
-    response.set_cookie('prevTitle', title)"""
-
+    if (dept is not None):
+        response.set_cookie('prevDept', dept)
+    if (coursenum is not None):
+        response.set_cookie('pCoursenum', coursenum)
+    if (area is not None):
+        response.set_cookie('prevArea', area)
+    if (title is not None):
+        response.set_cookie('prevTitle', title)
     return response
     
 # ---------------------------------------------------

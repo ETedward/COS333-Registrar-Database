@@ -95,8 +95,6 @@ def stdStr(row):
                  str(row[3]) + '\n' + \
                  str(row[4]) + '\n' + \
                  str(row[5])
-    print(output)
-
 
 def runDetails(argv):
     DATABASE_NAME = 'reg.sqlite'
