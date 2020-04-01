@@ -31,19 +31,40 @@ def handlereg():
     print("THIS IS INPUT:")
 
     html = render_template('indexreg.html',
-                           classid = classid,
                            output = output,
-                           input1 = input[0:6],
-                           input2 = input[6:])
+                           input = input)
     response = make_response(html)
     return response
 
 @app.route('/', methods=['GET'])
 def index():
-    dept = request.args.get('dept')
-    coursenum = request.args.get('coursenum')
-    area = request.args.get('area')
-    title = request.args.get('title')
+    dept = coursenum = area = title = ''
+    if request.cookies.get('prevDept'):
+        dept = request.cookies.get('prevDept')
+    if request.cookies.get('pCourseNum'):
+        coursenum = request.cookies.get('pCourseNum')
+    if request.cookies.get('prevArea'):
+        area = request.cookies.get('prevArea')
+    if request.cookies.get('prevTitle'):
+        title = request.cookies.get('prevTitle')
+
+    if request.args.get('dept'):
+        dept = request.args.get('dept')
+    else:
+        dept = ''
+    if request.args.get('coursenum'):
+        coursenum = request.args.get('coursenum')
+    else:
+        coursenum = ''
+    if request.args.get('area'):
+        area = request.args.get('area')
+    else:
+        area = ''
+    if request.args.get('title'):
+        title = request.args.get('title')
+    else:
+        title = ''
+
     reg = 'reg'
     args = [reg]
     args.append("-h")
@@ -59,7 +80,7 @@ def index():
     if title:
         args.append('-title')
         args.append(title)
-
+    print(args)
     result = regserver.managedb(args)
 
     html = render_template('index.html',
@@ -68,18 +89,27 @@ def index():
                            area=area,
                            title=title,
                            result=result)
-
     response = make_response(html)
-    if (dept is not None):
-        response.set_cookie('prevDept', dept)
-    if (coursenum is not None):
-        response.set_cookie('pCoursenum', coursenum)
-    if (area is not None):
-        response.set_cookie('prevArea', area)
-    if (title is not None):
-        response.set_cookie('prevTitle', title)
+
+    if request.args.get('dept'):
+        response.set_cookie('prevDept', value=dept)
+    else:
+        response.set_cookie('prevDept', max_age=0)
+    if request.args.get('coursenum'):
+        response.set_cookie('pCourseNum', value=coursenum)
+    else:
+        response.set_cookie('pCourseNum', max_age=0)
+    if request.args.get('area'):
+        response.set_cookie('prevArea', value=area)
+    else:
+        response.set_cookie('prevArea', max_age=0)
+    if request.args.get('title'):
+        response.set_cookie('prevTitle', value=title)
+    else:
+        response.set_cookie('prevTitle', max_age=0)
+
     return response
-    
+
 # ---------------------------------------------------
 
 
