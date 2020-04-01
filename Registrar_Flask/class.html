@@ -3,7 +3,11 @@
 
     {% for result in input1 %}
         <tr>
-            <td><strong>{{result}}</strong></td>
+            <td>
+            {% set tmp = result.split(':') %}
+            <strong> {{ tmp[0] }}: </strong>
+                {{tmp [1] }}
+            </td>
             <br>
         </tr>
     {% endfor %}
@@ -12,7 +16,11 @@
    <h2>Course Details (course id )</h2>
     {% for result in input2 %}
         <tr>
-            <td><strong>{{result}}</strong></td>
+            <td>
+            {% set tmp = result.split(':') %}
+            <strong> {{ tmp[0] }}: </strong>
+                {{tmp [1] }}
+            </td>
             <br>
         </tr>
     {% endfor %}
