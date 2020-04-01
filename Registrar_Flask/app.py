@@ -22,28 +22,31 @@ def handlereg():
     url = request.url
 
     prev_url = request.cookies.get('prevAddress')
+    url_index = prev_url.find('?')
+    redir_url = prev_url[url_index:]
+
     index = url.find('=')
     classid = url[index + 1:]
+
     idlist = ["regdetails","-h", classid]
     output = regdetails.runDetails(idlist)
 
-    print("THIS IS OUTPUT:")
-    print(output)
+    # print("THIS IS OUTPUT:")
+    # print(output)
     input = output.splitlines()
-    print("THIS IS INPUT:")
+    # print("THIS IS INPUT:")
 
     html = render_template('indexreg.html',
                            classid=classid,
                            input1=input[0:6],
                            input2=input[6:],
-                           prev_url=prev_url)
+                           redir_url=redir_url)
     response = make_response(html)
     return response
 
 
 @app.route('/', methods=['GET'])
 def index():
-    dept = coursenum = area = title = ''
     if request.cookies.get('prevDept'):
         dept = request.cookies.get('prevDept')
     if request.cookies.get('pCourseNum'):
