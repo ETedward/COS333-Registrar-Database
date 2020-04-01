@@ -31,6 +31,7 @@ def handlereg():
     print("THIS IS INPUT:")
 
     html = render_template('indexreg.html',
+                           classid = classid,
                            output = output,
                            input = input)
     response = make_response(html)
