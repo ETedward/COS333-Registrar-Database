@@ -6,8 +6,10 @@
             <td>
             {% set tmp = result.split(':') %}
             <strong> {{tmp[0]}}: </strong>
+                {%if tmp[2]%}
+                {{tmp[1]}}:{{tmp[2]}}
+                {%else%}
                 {{tmp[1]}}
-                {%if tmp[2]%}:{{tmp[2]}}
                 {% endif %}
             </td>
             <br>
