@@ -33,7 +33,8 @@ def handlereg():
     html = render_template('indexreg.html',
                            classid = classid,
                            output = output,
-                           input = input)
+                           input1 = input[0:6],
+                           input2 = input[6:])
     response = make_response(html)
     return response
 
