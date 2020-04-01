@@ -119,7 +119,6 @@ def main(argv):
             output = load(floread)
             sock.close()
 
-
         except Exception as e:
             print(e, file=stderr)
 
