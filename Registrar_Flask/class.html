@@ -5,15 +5,19 @@
         <tr>
             <td>
             {% set tmp = result.split(':') %}
-            <strong> {{ tmp[0] }}: </strong>
-                {{tmp [1] }}
+            <strong> {{tmp[0]}}: </strong>
+                {{tmp[1]}}
+                {%if tmp[2]%}:{{tmp[2]}}
+                {% endif %}
             </td>
             <br>
         </tr>
     {% endfor %}
 
    <hr>
-   <h2>Course Details (course id {{input1[0]}} )</h2>
+   <h2>Course Details (course id
+       {% set tmp = input1[0].split(':') %}
+       {{tmp[1]}})</h2>
     {% for result in input2 %}
         <tr>
             <td>
