@@ -4,4 +4,4 @@ REM runserver.bat
 REM Author: Bob Dondero
 REM --------------------------------------------------------------------
 
-python penny.py %*
+python app.py %*
