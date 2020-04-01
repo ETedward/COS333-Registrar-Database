@@ -13,15 +13,18 @@
     {% endfor %}
 
    <hr>
-   <h2>Course Details (course id )</h2>
+   <h2>Course Details (course id {{input1[0]}} )</h2>
     {% for result in input2 %}
         <tr>
             <td>
+                {% if result != "" %}
             {% set tmp = result.split(':') %}
             <strong> {{ tmp[0] }}: </strong>
                 {{tmp [1] }}
             </td>
             <br>
+            {% endif %}
+
         </tr>
     {% endfor %}
    <hr>
