@@ -5,6 +5,7 @@
 # Author: Bharat and Edward
 # ---------------------------------------------------------------------
 import regserver
+import regdetails
 from sys import argv
 from database import Database
 from flask import Flask, request, make_response, redirect, url_for
@@ -16,14 +17,23 @@ app = Flask(__name__, template_folder='.')
 
 # ---------------------------------------------------------------------
 
-
 @app.route('/regdetails', methods=['GET'])
 def handlereg():
-    html = render_template('header.html')
     url = request.url
     index = url.find('=')
     classid = url[index + 1:]
-    print(classid)
+    #print(classid)
+    idlist = ["regdetails",classid]
+    output = regdetails.runDetails(idlist)
+    print("THIS IS OUTPUT:")
+    print(output)
+    #input = output.splitlines()
+    print("THIS IS INPUT:")
+    #print(input[0])
+    #print(input[1])
+    html = render_template('indexreg.html',
+                           classid = classid,
+                           output=output)
     response = make_response(html)
     return response
 
@@ -57,9 +67,14 @@ def index():
                            area=area,
                            title=title,
                            result=result)
-    response = make_response(html)
-    return response
 
+    response = make_response(html)
+    """response.set_cookie('prevDept', dept)
+    response.set_cookie('pCourseNum', coursenum)
+    response.set_cookie('prevArea', area)
+    response.set_cookie('prevTitle', title)"""
+
+    return response
     
 # ---------------------------------------------------
 
