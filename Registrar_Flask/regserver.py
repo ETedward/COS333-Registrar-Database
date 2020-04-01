@@ -176,13 +176,25 @@ def managedb(argv):
     connection.close()
     return sb
 
+
 def stdStr(row):
-    output = str(row[0]) + '  \t' + \
-             str(row[1]) + '\t\t' + \
-             str(row[2]) + '\t\t' + \
-             str(row[3]) + '\t\t' + \
-             str(row[4])
+    output = []
+    output.append(int(row[0]))
+    output.append(str(row[1]))
+    output.append(str(row[2]))
+    output.append(str(row[3]))
+    output.append(str(row[4]))
     return output
+
+
+
+    # output = '<tr>\n\t<td>\n\t<a href="/regdetails?classid='
+    # output += (str(row[0]) + '">\n8361</a>\n</td>\n\n<td>')
+    # output += (str(row[1]) + '</td>\n<td>')
+    # output += (str(row[2]) + '</td>\n<td>')
+    # output += (str(row[3]) + '</td>\n<td>')
+    # output += (str(row[4]) + '</td>\n</tr>')
+    # return output
 
 
 # -----------------------------------------------------------------------
