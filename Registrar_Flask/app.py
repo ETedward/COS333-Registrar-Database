@@ -29,20 +29,25 @@ def handlereg():
     classid = url[index + 1:]
 
     idlist = ["regdetails","-h", classid]
-    output = regdetails.runDetails(idlist)
 
-    # print("THIS IS OUTPUT:")
-    # print(output)
-    input = output.splitlines()
-    # print("THIS IS INPUT:")
+    try:
+        output = regdetails.runDetails(idlist)
+        input = output.splitlines()
 
-    html = render_template('indexreg.html',
-                           classid=classid,
-                           input1=input[0:6],
-                           input2=input[6:],
-                           redir_url=redir_url)
+        html = render_template('indexreg.html',
+                               classid=classid,
+                               input1=input[0:6],
+                               input2=input[6:],
+                               redir_url=redir_url)
+    except:
+        if (classid):
+            html = render_template('missing.html', message="classid does not exist")
+        else:
+            html = render_template('missing.html', message="Missing class id")
+
     response = make_response(html)
     return response
+
 
 
 @app.route('/', methods=['GET'])
