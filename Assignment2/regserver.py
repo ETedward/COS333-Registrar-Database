@@ -88,10 +88,18 @@ def selectStr(param):
 
 def managedb(argv):
     DATABASE_NAME = 'reg.sqlite'
+    fail = 0
+    toReturn = []
     sb = []
 
     if not path.isfile(DATABASE_NAME):
-        raise Exception('reg: database reg.sqlite not found')
+        err = ("regserver: database reg.sqlite not found")
+        sb.append(err)
+        fail = 1
+        toReturn.append(fail)
+        toReturn.append(sb)
+        print(sb)
+        return toReturn
 
     try:
         param = buildStr(argv)
@@ -107,12 +115,24 @@ def managedb(argv):
         connection = connect(DATABASE_NAME)
         cursor = connection.cursor()
     except:
-        print("reg: database reg.sqlite not found")
+        err = "regserver: database reg.sqlite not found"
+        sb.append(err)
+        fail = 1
+        toReturn.append(fail)
+        toReturn.append(sb)
+        print(sb)
+        return toReturn
+
 
     try:
         stmtStr = selectStr(param)
     except:
-        print("sqlite3.OperationalError: no such table: classes")
+        sb[0] = "regserver: sqlite3.OperationalError: no such table: classes"
+        fail = 1
+        toReturn.append(fail)
+        toReturn.append(sb)
+        print(sb)
+        return toReturn
 
     values = []
     if param[0]:  # dept is true
@@ -176,13 +196,15 @@ def managedb(argv):
 
     cursor.close()
     connection.close()
-    return sb
+    toReturn.append(fail)
+    toReturn.append(sb)
+    return toReturn
 
 def stdStr(row):
-    output = str(row[0]) + '  \t' + \
-             str(row[1]) + '\t\t' + \
-             str(row[2]) + '\t\t' + \
-             str(row[3]) + '\t\t' + \
+    output = str(row[0]) + ' ' + \
+             str(row[1]) + ' ' + \
+             str(row[2]) + ' ' + \
+             str(row[3]) + ' ' + \
              str(row[4])
     return output
 
@@ -209,7 +231,7 @@ def main(argv):
     BACKLOG = 5
 
     if len(argv) != 2:
-        print('Usage: python %s port' % argv[0])
+        print('Usage: regserver port', file = stderr)
         exit(1)
 
     try:
@@ -236,7 +258,7 @@ def main(argv):
                     print('Received command: getDetails')
                     output = handleClientregdetails(allvars)
                 else:
-                    output = ''
+                    output = ['']
                 flowrite = sock.makefile(mode='wb')
                 dump(output, flowrite)
                 flowrite.flush()
