@@ -23,8 +23,14 @@ from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
 def main(argv):
 
     if len(argv) != 3:
-        print('Usage: python %s host port' % argv[0])
+        print('Usage: reg host port')
         exit(1)
+    try:
+        argv[2] = int(argv[2])
+    except:
+        print('Port must be an integer')
+        exit(1)
+
 
     app = QApplication([])
     button = QPushButton('Submit')
@@ -87,6 +93,34 @@ def main(argv):
     screenSize = QDesktopWidget().screenGeometry()
     window.resize(screenSize.width() // 2, screenSize.height() // 2)
 
+    args = [argv[0]]
+    args.append("-h")
+    print('Sent command: getOverview')
+
+    try:
+        host = argv[1]
+        port = int(argv[2])
+
+        sock = socket(AF_INET, SOCK_STREAM)
+        sock.connect((host, port))
+        flowrite = sock.makefile(mode='wb')
+        dump(args, flowrite)
+        flowrite.flush()
+        floread = sock.makefile(mode='rb')
+        output = load(floread)
+        sock.close()
+
+    except Exception as e:
+        print(e, file=stderr)
+
+    if output[0] == 1:
+        window.show()
+        error = QMessageBox.information(window, 'Database Error', output[1][0])
+    else:
+        for item in output[1]:
+            listWidget.addItem(item)
+        window.show()
+
     def buttonSlot():
         listWidget.clear()
         args = [argv[0]]
@@ -122,15 +156,19 @@ def main(argv):
         except Exception as e:
             print(e, file=stderr)
 
-        for item in output:
-            listWidget.addItem(item)
-        window.show()
+        if output[0] == 1:
+            window.show()
+            error = QMessageBox.information(window, 'Database Error', output[1][0])
+        else:
+            for item in output[1]:
+                listWidget.addItem(item)
+            window.show()
 
 
     def handleClick():
         item = listWidget.currentItem()
         text = item.text()
-        itemcoursenum = text[0:text.index('\t')]
+        itemcoursenum = text[0:text.index(' ')]
         detailargs = ['regdetails.py', '-h', itemcoursenum]
         print('Sent command: getDetail')
         try:
