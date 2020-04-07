@@ -266,6 +266,13 @@ def main(argv):
                 print('Closed socket' + str(clientAddr))
             except Exception as e:
                 print(e, file=stderr)
+                output[0] = 1
+                output.append(e)
+                flowrite = sock.makefile(mode='wb')
+                dump(output, flowrite)
+                flowrite.flush()
+                sock.close()
+                print('Closed socket' + str(clientAddr))
     except Exception as e:
         print(e, file=stderr)
 
