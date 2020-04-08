@@ -10,13 +10,11 @@ from sys import exit, argv, stderr
 from os import path
 from sys import argv, stderr, exit
 
-
 from socket import socket
 from socket import AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from pickle import dump
 from pickle import load
 from sqlite3 import connect
-
 
 def buildStr(argv):
     dept = coursenum = area = title = loopskip = 0
@@ -123,12 +121,12 @@ def managedb(argv):
         print(sb)
         return toReturn
 
-
     try:
         stmtStr = selectStr(param)
     except:
-        sb[0] = "regserver: sqlite3.OperationalError: no such table: classes"
-        fail = 1
+        err = "regserver: sqlite3.OperationalError: no such table: classes"
+        sb.append(err)
+        fail = 2
         toReturn.append(fail)
         toReturn.append(sb)
         print(sb)
@@ -236,7 +234,10 @@ def main(argv):
 
     try:
         port = int(argv[1])
+    except:
+        print("Error: This is not an integer Port")
 
+    try:
         serverSock = socket(AF_INET, SOCK_STREAM)
         print('Opened server socket')
         serverSock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
@@ -275,7 +276,6 @@ def main(argv):
                 print('Closed socket' + str(clientAddr))
     except Exception as e:
         print(e, file=stderr)
-
 
 # -----------------------------------------------------------------------
 

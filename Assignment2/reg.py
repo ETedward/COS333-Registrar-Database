@@ -19,7 +19,6 @@ from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget, QListWidgetItem
 from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
 
 # -----------------------------------------------------------------------
-
 def main(argv):
 
     if len(argv) != 3:
@@ -30,7 +29,6 @@ def main(argv):
     except:
         print('Port must be an integer')
         exit(1)
-
 
     app = QApplication([])
     button = QPushButton('Submit')
@@ -113,13 +111,15 @@ def main(argv):
     except Exception as e:
         print(e, file=stderr)
 
-    if output[0] == 1:
-        window.show()
-        error = QMessageBox.information(window, 'Database Error', output[1][0])
-    else:
-        for item in output[1]:
-            listWidget.addItem(item)
-        window.show()
+    try:
+        if output[0] == 1:
+            window.show()
+        else:
+            for item in output[1]:
+                listWidget.addItem(item)
+            window.show()
+    except:
+        error = QMessageBox.information(window, 'Server Error', "Server is unavailable")
 
     def buttonSlot():
         listWidget.clear()
@@ -153,17 +153,19 @@ def main(argv):
             output = load(floread)
             sock.close()
 
+            if output[0] == 1:
+                window.show()
+                error = QMessageBox.information(window, 'Database Error', output[1][0])
+            elif output[0] == 2:
+                window.show()
+                error = QMessageBox.information(window, 'Database Error', "Database is corrupted")
+            else:
+                for item in output[1]:
+                    listWidget.addItem(item)
+
         except Exception as e:
             print(e, file=stderr)
-
-        if output[0] == 1:
             window.show()
-            error = QMessageBox.information(window, 'Database Error', output[1][0])
-        else:
-            for item in output[1]:
-                listWidget.addItem(item)
-            window.show()
-
 
     def handleClick():
         item = listWidget.currentItem()
@@ -183,23 +185,25 @@ def main(argv):
             floread = sock.makefile(mode='rb')
             finalStr = load(floread)
             sock.close()
-
-
+            reply = QMessageBox.information(window, 'Class Details', finalStr)
         except Exception as e:
+            error = QMessageBox.information(window, 'Server Error', 'Server is Unavailable')
+            print("testing error server crashed")
             print(e, file=stderr)
 
-        reply = QMessageBox.information(window, 'Class Details', finalStr)
-
-    button.clicked.connect(buttonSlot)
-    LineEdit1.returnPressed.connect(buttonSlot)
-    LineEdit2.returnPressed.connect(buttonSlot)
-    LineEdit3.returnPressed.connect(buttonSlot)
-    LineEdit4.returnPressed.connect(buttonSlot)
-    listWidget.itemActivated.connect(handleClick)
+    try:
+        button.clicked.connect(buttonSlot)
+        LineEdit1.returnPressed.connect(buttonSlot)
+        LineEdit2.returnPressed.connect(buttonSlot)
+        LineEdit3.returnPressed.connect(buttonSlot)
+        LineEdit4.returnPressed.connect(buttonSlot)
+        listWidget.itemActivated.connect(handleClick)
+    except:
+        error = QMessageBox.information(window, 'Server Error', 'Server is unavailable')
+        print(e, file=stderr)
 
     window.show()
     exit(app.exec_())
-
 
 if __name__ == '__main__':
     main(argv)
