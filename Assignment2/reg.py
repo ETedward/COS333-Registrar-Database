@@ -11,12 +11,14 @@ from sys import exit, argv, stderr
 from socket import socket, AF_INET, SOCK_STREAM
 from pickle import load
 from pickle import dump
+from queue import Queue
 
 #import GUI widgets
 from sys import exit
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
 from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget, QListWidgetItem
 from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
+from PyQt5.QtCore import QTimer
 
 # -----------------------------------------------------------------------
 class WorkerThread(Thread):
@@ -34,36 +36,20 @@ class WorkerThread(Thread):
 
     def run(self):
         print('Sent command: getOverview')
-        try:
-            host = argv[1]
-            port = int(argv[2])
 
-            sock = socket(AF_INET, SOCK_STREAM)
-            sock.connect((host, port))
-            flowrite = sock.makefile(mode='wb')
-            dump(self.args, flowrite)
-            flowrite.flush()
-            floread = sock.makefile(mode='rb')
-            output = load(floread)
-            sock.close()
+        host = argv[1]
+        port = int(argv[2])
 
-            if output[0] == 1:
-                self.window.show()
-                error = QMessageBox.information(window, 'Database Error', output[1][0])
-            elif output[0] == 2:
-                self.window.show()
-                error = QMessageBox.information(window, 'Database Error', "Database is corrupted")
-            else:
-                for item in output[1]:
-                    self.listWidget.addItem(item)
+        sock = socket(AF_INET, SOCK_STREAM)
+        sock.connect((host, port))
+        flowrite = sock.makefile(mode='wb')
+        dump(self.args, flowrite)
+        flowrite.flush()
+        floread = sock.makefile(mode='rb')
+        output = load(floread)
+        sock.close()
 
-        except Exception as e:
-            print(e, file=stderr)
-
-        if self._shouldStop:
-            return
-
-        self._queue.put(books)
+        self._queue.put(output)
 
 def main(argv):
 
@@ -184,7 +170,7 @@ def main(argv):
             args.append('-title')
             args.append(LineEdit4.text())
 
-        workerThread = WorkerThread(host, port, author, booksTextEdit)
+        workerThread = WorkerThread(host, port, author, queue)
         workerThread.start()
 
         print('Sent command: getOverview')
@@ -213,6 +199,27 @@ def main(argv):
 
         except Exception as e:
             print(e, file=stderr) """
+
+        def pollQueue():
+            while not queue.empty():
+                output = queue.get()
+                if output[0] == 1:
+                    self.window.show()
+                    error = QMessageBox.information(window, 'Database Error', output[1][0])
+                elif output[0] == 2:
+                    self.window.show()
+                    error = QMessageBox.information(window, 'Database Error', "Database is corrupted")
+                else:
+                    for item in output[1]:
+                        self.listWidget.addItem(item)
+
+        timer = QTimer()
+        timer.timeout.connect(pollQueue)
+        timer.start()
+
+        except Exception as e:
+            print(e, file=stderr)
+
         window.show()
 
     def handleClick():
