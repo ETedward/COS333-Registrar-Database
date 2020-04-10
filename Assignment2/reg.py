@@ -21,6 +21,7 @@ from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget, QListWidgetItem
 from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
 from PyQt5.QtCore import QTimer
 
+workerThread = None
 
 # -----------------------------------------------------------------------
 
@@ -33,6 +34,10 @@ class WorkerThread(Thread):
         self._port = port
         self._args = args
         self._queue = queue
+        self._shouldStop = False
+
+    def stop(self):
+        self._shouldStop = True
 
     def run(self):
         sock = socket(AF_INET, SOCK_STREAM)
@@ -45,6 +50,9 @@ class WorkerThread(Thread):
         inFlo = sock.makefile(mode='rb')
         output = load(inFlo)
         sock.close()
+
+        if self._shouldStop:
+            return
 
         self._queue.put(output)
 
@@ -177,6 +185,9 @@ def main(argv):
         try:
             host = argv[1]
             port = int(argv[2])
+            global workerThread
+            if workerThread is not None:
+                workerThread.stop()
             workerThread = WorkerThread(host, port, args, queue)
             workerThread.start()
             # sock = socket(AF_INET, SOCK_STREAM)
