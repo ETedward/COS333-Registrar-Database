@@ -19,6 +19,36 @@ from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget, QListWidgetItem
 from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
 
 # -----------------------------------------------------------------------
+class WorkerThread(Thread):
+
+    def __init__(self, host, port, author, queue):
+        Thread.__init__(self)
+        self._host = host
+        self._port = port
+        self._author = author
+        self._queue = queue
+        self._shouldStop = False
+
+    def stop(self):
+        self._shouldStop = True
+
+    def run(self):
+        sock = socket(AF_INET, SOCK_STREAM)
+        sock.connect((self._host, self._port))
+
+        outFlo = sock.makefile(mode='wb')
+        dump(self._author, outFlo)
+        outFlo.flush()
+
+        inFlo = sock.makefile(mode='rb')
+        books = load(inFlo)
+        sock.close()
+
+        if self._shouldStop:
+            return
+
+        self._queue.put(books)
+
 def main(argv):
 
     if len(argv) != 3:
@@ -31,7 +61,7 @@ def main(argv):
         exit(1)
 
     app = QApplication([])
-    button = QPushButton('Submit')
+    #button = QPushButton('Submit')
     listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
