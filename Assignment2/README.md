@@ -1,42 +1,27 @@
-# COS333-Registrar-Database Assignment 2
-Model database for the Princeton registrar.
-
-------------------------------------------------------------------------
-Your Names:
-
-Edward Tian, ejtian
-Bharat Govil, bgovil
+ejtian bgovil
+Names: Edward Tian, Bharat Govil
 
 ------------------------------------------------------------------------
 Contributions:
 
-Edward: Edward worked on the UI interfaces displaying the line-edits,  
-widgets and textboxes to the GUI interface. Edward connected the
-assignment1 regdetails code with the assignment2 code. Edward handled the
-pop up messages for double clicks and enters for further details. Also 
-worked on the regserver code through peer programming with Bharat.
+Edward worked to debug the assignment 2 code ahead of time.
 
-Bharat: Also worked on the UI interface in structuring a display that 
-matches the assignment specifications. Bharat implemented a function 
-that handles the correct regdetails output into the message box. Bharat
-spearheaded the majority of the regserver code and the server / socket
-handling. Together, we also worked to modularize our code and fix 
-several bugs from the previous assignment part. 
+Then we engaged in a long session of peer programming together, rewatching 
+the lecture slides on threading, and progressing step by step through the 
+different iterations of Penny and equivalents in our code. We helped each 
+other with bugs and worked together to finally arrive at Penny5, and an 
+equivalent Reg.py!
 
 ------------------------------------------------------------------------
 What authorized sources of information and did you use for the assignment?
 
-1) The course's lectures, and precept notes. 
+1) Preceptor Jeffery Li helped us debug our assignment 2 code
 2) Scanned through Piazza posts for key insights.
-3) Professor Dondero answered our questions through the instructor email.
-4) Jace helped us during his Saturday office hours.
+3) Followed the lectures on threads, and referenced the Penny.py code.
 
 ------------------------------------------------------------------------
 Assignment Process:
 
-We spent around 10 hours on the assignment. It was helpful and useful.
-We particularly enjoyed the UI design sections and seeing our work from
-part one being displayed. The server handling was more tedious, but still
-educational.
+We spent around 5 hours on the assignment. It wasn't too bad!
 
 ------------------------------------------------------------------------
