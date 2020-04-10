@@ -14,6 +14,7 @@ from socket import socket
 from socket import AF_INET, SOCK_STREAM, SOL_SOCKET, SO_REUSEADDR
 from pickle import dump
 from pickle import load
+from time import sleep
 from sqlite3 import connect
 
 def buildStr(argv):
@@ -228,12 +229,15 @@ def handleClientregdetails(allvars):
 def main(argv):
     BACKLOG = 5
 
-    if len(argv) != 2:
+    if len(argv) != 3:
         print('Usage: regserver port', file = stderr)
+        print('Usage: python %s port delay' % argv[0])
         exit(1)
 
     try:
         port = int(argv[1])
+        delay = int(argv[2])
+
     except:
         print("Error: This is not an integer Port")
 
@@ -260,6 +264,11 @@ def main(argv):
                     output = handleClientregdetails(allvars)
                 else:
                     output = ['']
+
+                # Sleep for delay seconds to simulate a slow server response.
+                sleep(delay)
+                # Should we move delay to manageDB?
+
                 flowrite = sock.makefile(mode='wb')
                 dump(output, flowrite)
                 flowrite.flush()
