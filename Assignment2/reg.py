@@ -73,7 +73,6 @@ def main(argv):
     queue = Queue()
 
     app = QApplication([])
-    #button = QPushButton('Submit')
     listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
@@ -89,7 +88,6 @@ def main(argv):
     outputLayout = QGridLayout()
     outputLayout.setRowStretch(0, 0)
     outputLayout.setColumnStretch(0, 0)
-    #outputLayout.addWidget(button, 0, 0)
     outputLayout.addWidget(listWidget, 1, 0)
     outputFrame = QFrame()
     outputFrame.setLayout(outputLayout)
@@ -107,14 +105,8 @@ def main(argv):
     inputFrame = QFrame()
     inputFrame.setLayout(inputLayout)
 
-    #submitLayout = QGridLayout()
-    #submitLayout.addWidget(button, 0, 0)
-    #submitFrame = QFrame()
-    #submitFrame.setLayout(submitLayout)
-
     topLayout = QGridLayout()
     topLayout.addWidget(inputFrame, 0, 0)
-    #topLayout.addWidget(submitFrame, 0, 1)
     topFrame = QFrame()
     topFrame.setLayout(topLayout)
 
@@ -190,24 +182,6 @@ def main(argv):
                 workerThread.stop()
             workerThread = WorkerThread(host, port, args, queue)
             workerThread.start()
-            # sock = socket(AF_INET, SOCK_STREAM)
-            # sock.connect((host, port))
-            # flowrite = sock.makefile(mode='wb')
-            # dump(args, flowrite)
-            # flowrite.flush()
-            # floread = sock.makefile(mode='rb')
-            # output = load(floread)
-            # sock.close()
-            #
-            # if output[0] == 1:
-            #     window.show()
-            #     error = QMessageBox.information(window, 'Database Error', output[1][0])
-            # elif output[0] == 2:
-            #     window.show()
-            #     error = QMessageBox.information(window, 'Database Error', "Database is corrupted")
-            # else:
-            #     for item in output[1]:
-            #         listWidget.addItem(item)
 
         except Exception as e:
             print(e, file=stderr)
@@ -233,8 +207,6 @@ def main(argv):
     timer.timeout.connect(pollQueue)
     timer.start()
 
-
-
     def handleClick():
         item = listWidget.currentItem()
         text = item.text()
@@ -255,17 +227,11 @@ def main(argv):
             sock.close()
             reply = QMessageBox.information(window, 'Class Details', finalStr)
         except Exception as e:
-            error = QMessageBox.information(window, 'Server Error', 'Server is Unavailable')
-            print("testing error server crashed")
+            error = QMessageBox.information(window, 'Server Error', 'Server has crashed and is unavailable')
+            print("server crashed")
             print(e, file=stderr)
 
     try:
-        #button.clicked.connect(buttonSlot)
-        #LineEdit1.returnPressed.connect(buttonSlot)
-        #LineEdit2.returnPressed.connect(buttonSlot)
-        #LineEdit3.returnPressed.connect(buttonSlot)
-        #LineEdit4.returnPressed.connect(buttonSlot)
-
         LineEdit1.textChanged.connect(buttonSlot)
         LineEdit2.textChanged.connect(buttonSlot)
         LineEdit3.textChanged.connect(buttonSlot)
