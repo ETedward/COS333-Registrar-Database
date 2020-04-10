@@ -31,7 +31,7 @@ def main(argv):
         exit(1)
 
     app = QApplication([])
-    button = QPushButton('Submit')
+    #button = QPushButton('Submit')
     listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
@@ -65,14 +65,14 @@ def main(argv):
     inputFrame = QFrame()
     inputFrame.setLayout(inputLayout)
 
-    submitLayout = QGridLayout()
-    submitLayout.addWidget(button, 0, 0)
-    submitFrame = QFrame()
-    submitFrame.setLayout(submitLayout)
+    #submitLayout = QGridLayout()
+    #submitLayout.addWidget(button, 0, 0)
+    #submitFrame = QFrame()
+    #submitFrame.setLayout(submitLayout)
 
     topLayout = QGridLayout()
     topLayout.addWidget(inputFrame, 0, 0)
-    topLayout.addWidget(submitFrame, 0, 1)
+    #topLayout.addWidget(submitFrame, 0, 1)
     topFrame = QFrame()
     topFrame.setLayout(topLayout)
 
@@ -192,11 +192,17 @@ def main(argv):
             print(e, file=stderr)
 
     try:
-        button.clicked.connect(buttonSlot)
-        LineEdit1.returnPressed.connect(buttonSlot)
-        LineEdit2.returnPressed.connect(buttonSlot)
-        LineEdit3.returnPressed.connect(buttonSlot)
-        LineEdit4.returnPressed.connect(buttonSlot)
+        #button.clicked.connect(buttonSlot)
+        #LineEdit1.returnPressed.connect(buttonSlot)
+        #LineEdit2.returnPressed.connect(buttonSlot)
+        #LineEdit3.returnPressed.connect(buttonSlot)
+        #LineEdit4.returnPressed.connect(buttonSlot)
+
+        LineEdit1.textChanged.connect(buttonSlot)
+        LineEdit2.textChanged.connect(buttonSlot)
+        LineEdit3.textChanged.connect(buttonSlot)
+        LineEdit4.textChanged.connect(buttonSlot)
+
         listWidget.itemActivated.connect(handleClick)
     except:
         error = QMessageBox.information(window, 'Server Error', 'Server is unavailable')
