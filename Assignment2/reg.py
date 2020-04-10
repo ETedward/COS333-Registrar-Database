@@ -33,16 +33,32 @@ class WorkerThread(Thread):
         self._shouldStop = True
 
     def run(self):
-        sock = socket(AF_INET, SOCK_STREAM)
-        sock.connect((self._host, self._port))
+        print('Sent command: getOverview')
+        try:
+            host = argv[1]
+            port = int(argv[2])
 
-        outFlo = sock.makefile(mode='wb')
-        dump(self._author, outFlo)
-        outFlo.flush()
+            sock = socket(AF_INET, SOCK_STREAM)
+            sock.connect((host, port))
+            flowrite = sock.makefile(mode='wb')
+            dump(self.args, flowrite)
+            flowrite.flush()
+            floread = sock.makefile(mode='rb')
+            output = load(floread)
+            sock.close()
 
-        inFlo = sock.makefile(mode='rb')
-        books = load(inFlo)
-        sock.close()
+            if output[0] == 1:
+                self.window.show()
+                error = QMessageBox.information(window, 'Database Error', output[1][0])
+            elif output[0] == 2:
+                self.window.show()
+                error = QMessageBox.information(window, 'Database Error', "Database is corrupted")
+            else:
+                for item in output[1]:
+                    self.listWidget.addItem(item)
+
+        except Exception as e:
+            print(e, file=stderr)
 
         if self._shouldStop:
             return
@@ -168,9 +184,11 @@ def main(argv):
             args.append('-title')
             args.append(LineEdit4.text())
 
-        #output = managedb(args)
+        workerThread = WorkerThread(host, port, author, booksTextEdit)
+        workerThread.start()
+
         print('Sent command: getOverview')
-        try:
+        """ try:
             host = argv[1]
             port = int(argv[2])
 
@@ -194,8 +212,8 @@ def main(argv):
                     listWidget.addItem(item)
 
         except Exception as e:
-            print(e, file=stderr)
-            window.show()
+            print(e, file=stderr) """
+        window.show()
 
     def handleClick():
         item = listWidget.currentItem()
@@ -222,11 +240,17 @@ def main(argv):
             print(e, file=stderr)
 
     try:
+        """
         button.clicked.connect(buttonSlot)
         LineEdit1.returnPressed.connect(buttonSlot)
         LineEdit2.returnPressed.connect(buttonSlot)
         LineEdit3.returnPressed.connect(buttonSlot)
         LineEdit4.returnPressed.connect(buttonSlot)
+        """
+        LineEdit1.textChanged.connect(buttonSlot)
+        LineEdit2.textChanged.connect(buttonSlot)
+        LineEdit3.textChanged.connect(buttonSlot)
+        LineEdit4.textChanged.connect(buttonSlot)
         listWidget.itemActivated.connect(handleClick)
     except:
         error = QMessageBox.information(window, 'Server Error', 'Server is unavailable')
