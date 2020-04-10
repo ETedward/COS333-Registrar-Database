@@ -14,11 +14,43 @@ from pickle import dump
 
 #import GUI widgets
 from sys import exit
+from threading import Thread
+from queue import Queue
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
 from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget, QListWidgetItem
 from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
+from PyQt5.QtCore import QTimer
+
 
 # -----------------------------------------------------------------------
+
+
+class WorkerThread(Thread):
+
+    def __init__(self, host, port, args, queue):
+        Thread.__init__(self)
+        self._host = host
+        self._port = port
+        self._args = args
+        self._queue = queue
+
+    def run(self):
+        sock = socket(AF_INET, SOCK_STREAM)
+        sock.connect((self._host, self._port))
+
+        outFlo = sock.makefile(mode='wb')
+        dump(self._args, outFlo)
+        outFlo.flush()
+
+        inFlo = sock.makefile(mode='rb')
+        output = load(inFlo)
+        sock.close()
+
+        self._queue.put(output)
+
+
+# -----------------------------------------------------------------------
+
 def main(argv):
 
     if len(argv) != 3:
@@ -29,6 +61,8 @@ def main(argv):
     except:
         print('Port must be an integer')
         exit(1)
+
+    queue = Queue()
 
     app = QApplication([])
     #button = QPushButton('Submit')
@@ -143,16 +177,36 @@ def main(argv):
         try:
             host = argv[1]
             port = int(argv[2])
+            workerThread = WorkerThread(host, port, args, queue)
+            workerThread.start()
+            # sock = socket(AF_INET, SOCK_STREAM)
+            # sock.connect((host, port))
+            # flowrite = sock.makefile(mode='wb')
+            # dump(args, flowrite)
+            # flowrite.flush()
+            # floread = sock.makefile(mode='rb')
+            # output = load(floread)
+            # sock.close()
+            #
+            # if output[0] == 1:
+            #     window.show()
+            #     error = QMessageBox.information(window, 'Database Error', output[1][0])
+            # elif output[0] == 2:
+            #     window.show()
+            #     error = QMessageBox.information(window, 'Database Error', "Database is corrupted")
+            # else:
+            #     for item in output[1]:
+            #         listWidget.addItem(item)
 
-            sock = socket(AF_INET, SOCK_STREAM)
-            sock.connect((host, port))
-            flowrite = sock.makefile(mode='wb')
-            dump(args, flowrite)
-            flowrite.flush()
-            floread = sock.makefile(mode='rb')
-            output = load(floread)
-            sock.close()
+        except Exception as e:
+            print(e, file=stderr)
+            window.show()
 
+    # Create a timer that polls the queue.
+
+    def pollQueue():
+        while not queue.empty():
+            output = queue.get()
             if output[0] == 1:
                 window.show()
                 error = QMessageBox.information(window, 'Database Error', output[1][0])
@@ -163,9 +217,12 @@ def main(argv):
                 for item in output[1]:
                     listWidget.addItem(item)
 
-        except Exception as e:
-            print(e, file=stderr)
-            window.show()
+
+    timer = QTimer()
+    timer.timeout.connect(pollQueue)
+    timer.start()
+
+
 
     def handleClick():
         item = listWidget.currentItem()
