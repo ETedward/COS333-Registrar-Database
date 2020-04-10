@@ -11,46 +11,14 @@ from sys import exit, argv, stderr
 from socket import socket, AF_INET, SOCK_STREAM
 from pickle import load
 from pickle import dump
-from queue import Queue
 
 #import GUI widgets
 from sys import exit
 from PyQt5.QtWidgets import QApplication, QPushButton, QGridLayout
 from PyQt5.QtWidgets import QMainWindow, QFrame, QDesktopWidget, QListWidgetItem
 from PyQt5.QtWidgets import QLineEdit, QLabel, QListWidget, QMessageBox
-from PyQt5.QtCore import QTimer
 
 # -----------------------------------------------------------------------
-class WorkerThread(Thread):
-
-    def __init__(self, host, port, author, queue):
-        Thread.__init__(self)
-        self._host = host
-        self._port = port
-        self._author = author
-        self._queue = queue
-        self._shouldStop = False
-
-    def stop(self):
-        self._shouldStop = True
-
-    def run(self):
-        print('Sent command: getOverview')
-
-        host = argv[1]
-        port = int(argv[2])
-
-        sock = socket(AF_INET, SOCK_STREAM)
-        sock.connect((host, port))
-        flowrite = sock.makefile(mode='wb')
-        dump(self.args, flowrite)
-        flowrite.flush()
-        floread = sock.makefile(mode='rb')
-        output = load(floread)
-        sock.close()
-
-        self._queue.put(output)
-
 def main(argv):
 
     if len(argv) != 3:
@@ -63,7 +31,7 @@ def main(argv):
         exit(1)
 
     app = QApplication([])
-    #button = QPushButton('Submit')
+    button = QPushButton('Submit')
     listWidget = QListWidget()
 
     LineEdit1 = QLineEdit('')
@@ -170,11 +138,9 @@ def main(argv):
             args.append('-title')
             args.append(LineEdit4.text())
 
-        workerThread = WorkerThread(host, port, author, queue)
-        workerThread.start()
-
+        #output = managedb(args)
         print('Sent command: getOverview')
-        """ try:
+        try:
             host = argv[1]
             port = int(argv[2])
 
@@ -198,29 +164,8 @@ def main(argv):
                     listWidget.addItem(item)
 
         except Exception as e:
-            print(e, file=stderr) """
-
-        def pollQueue():
-            while not queue.empty():
-                output = queue.get()
-                if output[0] == 1:
-                    self.window.show()
-                    error = QMessageBox.information(window, 'Database Error', output[1][0])
-                elif output[0] == 2:
-                    self.window.show()
-                    error = QMessageBox.information(window, 'Database Error', "Database is corrupted")
-                else:
-                    for item in output[1]:
-                        self.listWidget.addItem(item)
-
-        timer = QTimer()
-        timer.timeout.connect(pollQueue)
-        timer.start()
-
-        except Exception as e:
             print(e, file=stderr)
-
-        window.show()
+            window.show()
 
     def handleClick():
         item = listWidget.currentItem()
@@ -247,17 +192,11 @@ def main(argv):
             print(e, file=stderr)
 
     try:
-        """
         button.clicked.connect(buttonSlot)
         LineEdit1.returnPressed.connect(buttonSlot)
         LineEdit2.returnPressed.connect(buttonSlot)
         LineEdit3.returnPressed.connect(buttonSlot)
         LineEdit4.returnPressed.connect(buttonSlot)
-        """
-        LineEdit1.textChanged.connect(buttonSlot)
-        LineEdit2.textChanged.connect(buttonSlot)
-        LineEdit3.textChanged.connect(buttonSlot)
-        LineEdit4.textChanged.connect(buttonSlot)
         listWidget.itemActivated.connect(handleClick)
     except:
         error = QMessageBox.information(window, 'Server Error', 'Server is unavailable')
