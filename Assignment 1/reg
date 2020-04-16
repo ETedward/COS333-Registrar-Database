@@ -1,0 +1,169 @@
+#!/usr/bin/env python
+
+# -----------------------------------------------------------------------
+# reg.py.py
+# Author: Edward and Bharat
+# -----------------------------------------------------------------------
+
+from os import path
+from sys import argv, stderr, exit
+from sqlite3 import connect
+
+
+# -----------------------------------------------------------------------
+def buildStr(argv):
+    dept = coursenum = area = title = loopskip = 0
+    deptVal = coursenumVal = areaVal = titleVal = ''
+    length = len(argv)
+    token = [length]
+    for i in range(length):
+        if loopskip or i == 0:
+            loopskip = 0
+            continue
+        if argv[i] == '-h' and i == 1:
+            continue
+        if argv[i] == '-dept' and dept == 1:
+            raise ValueError
+        elif argv[i] == "-dept":
+            dept = 1
+            try:
+                deptVal = argv[i + 1]
+                loopskip = 1
+                continue
+            except:
+                print('reg.py: missing value')
+                exit(1)
+        if argv[i] == '-coursenum' and coursenum == 1:
+            raise ValueError
+        elif argv[i] == "-coursenum":
+            coursenum = 1
+            try:
+                coursenumVal = argv[i + 1]
+                loopskip = 1
+                continue
+            except:
+                print('reg.py: missing value')
+                exit(1)
+        if argv[i] == '-area' and area == 1:
+            raise ValueError
+        elif argv[i] == "-area":
+            area = 1
+            try:
+                areaVal = argv[i + 1]
+                loopskip = 1
+                continue
+            except:
+                print('reg.py: missing value')
+                exit(1)
+        if argv[i] == '-title' and title == 1:
+            raise ValueError
+        elif argv[i] == "-title":
+            title = 1
+            try:
+                titleVal = argv[i + 1]
+                loopskip = 1
+                continue
+            except:
+                print('reg.py: missing value')
+                exit(1)
+        print(argv[i])
+        raise SyntaxError
+
+    return [dept, coursenum, area, title, deptVal, coursenumVal, areaVal, titleVal]
+
+
+def selectStr(param):
+    # Create a prepared statement and substitute values.
+    stmtStr = 'SELECT classid, dept, coursenum, area, title ' + \
+              'FROM crosslistings, classes, courses ' + \
+              'WHERE classes.courseid = courses.courseid ' + \
+              'AND classes.courseid = crosslistings.courseid '
+    return stmtStr
+
+
+def outputStr(row):
+    print('Class ID:', str(row[0]))
+    print('Class Dept:', str(row[1]))
+    print('Course Num:', str(row[2]))
+    print('Area:', str(row[3]))
+    title = 'Title: ' + str(row[4])
+    if len(title) > 72:
+        concat = title.rfind(' ', 0, 68)
+        title = title[0:concat]
+        title = title + ' ... '
+    print(title)
+    print()
+
+
+def stdStr(row):
+    output = str(row[0]) + '\t' + \
+             str(row[1]) + '\t' + \
+             str(row[2]) + '\t' + \
+             str(row[3]) + '\t' + \
+             str(row[4])
+    return(output)
+
+
+def main(argv):
+    DATABASE_NAME = 'reg.py.sqlite'
+
+    if not path.isfile(DATABASE_NAME):
+        raise Exception('reg.py: database reg.py.sqlite not found')
+
+    try:
+        param = buildStr(argv)
+
+    except ValueError:
+        print('reg.py: duplicate key')
+        exit(1)
+    except SyntaxError:
+        print('reg.py: invalid key')
+        exit(1)
+
+    connection = connect(DATABASE_NAME)
+    cursor = connection.cursor()
+
+    stmtStr = selectStr(param)
+    values = []
+    if param[0]:  # dept is true
+        param[4] = "%" + param[4] + "%"
+        stmtStr += "AND dept LIKE ? "
+        values.append(param[4])
+
+    if param[1]:  # coursenum is true
+        param[5] = "%" + param[5] + "%"
+        stmtStr += "AND coursenum LIKE ? "
+        values.append(param[5])
+
+    if param[2]:  # area is true
+        param[6] = "%" + param[6] + "%"
+        stmtStr += "AND area LIKE ? "
+        values.append(param[6])
+
+    if param[3]:  # title is true
+        param[7] = "%" + param[7] + "%"
+        stmtStr += "AND title LIKE ? "
+        values.append(param[7])
+
+    stmtStr += 'ORDER BY coursenum '
+
+    cursor.execute(stmtStr, values)
+
+    if len(argv) > 1 and argv[1] == '-h':
+        print('ID:\tDept:\tNum:\tArea:\tTitle:')
+    row = cursor.fetchone()
+    while row is not None:
+        output = stdStr(row)
+        if len(argv) > 1 and argv[1] == '-h' and len(output) > 72:
+            concat = output.rfind(' ', 0, 68)
+            output = output[0:concat]
+            output = output + ' ... '
+        print(output)
+        row = cursor.fetchone()
+
+    cursor.close()
+    connection.close()
+
+
+if __name__ == '__main__':
+    main(argv)
