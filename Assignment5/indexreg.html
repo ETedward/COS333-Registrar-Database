@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html>
+   <head>
+      <meta name="viewport" content="width=device-width,
+         initial-scale=1">
+
+     <link rel="stylesheet" href=
+"https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  
+     <script src=
+"https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js">
+     </script>     
+     
+      <title>Registrar's Office Class Search</title>
+   </head>
+   
+   <body>
+      <div class="container bg-primary">
+         <center>
+            <h1>Registrar's Office: Class Details</h1>
+         </center>
+      </div>
+      
+      <div class="container">
+         <h2>Class Details (class id {{classid}})</h2>
+
+    {% for result in input1 %}
+        <tr>
+            <td>
+            {% set tmp = result.split(':') %}
+            <strong> {{tmp[0]}}: </strong>
+                {%if tmp[2]%}
+                {{tmp[1]}}:{{tmp[2]}}
+                {%else%}
+                {{tmp[1]}}
+                {% endif %}
+            </td>
+            <br>
+        </tr>
+    {% endfor %}
+
+   <hr>
+   <h2>Course Details (course id
+       {% set tmp = input1[0].split(':') %}
+       {{tmp[1]}})</h2>
+    {% for result in input2 %}
+        <tr>
+            <td>
+                {% if result != "" %}
+            {% set tmp = result.split(':') %}
+            <strong> {{ tmp[0] }}: </strong>
+                {%if tmp[2]%}
+                {{tmp[1]}}:{{tmp[2]}}
+                {%else%}
+                {{tmp[1]}}
+                {% endif %}
+            </td>
+            <br>
+            {% endif %}
+
+        </tr>
+    {% endfor %}
+      </div>
+      
+      
+      <div class="container bg-info">
+         <center>
+            Created by Edward and Bharat
+         </center>
+      </div> 
+       
+   </body>
+</html> 

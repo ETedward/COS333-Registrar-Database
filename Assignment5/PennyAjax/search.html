@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Penny.com</title>
+   </head>
+
+   <body onLoad="getAmPm(); getDateTime();
+      document.getElementById('authorInput').focus()">
+          
+      <hr>
+      Good <span id="ampmSpan"></span> and welcome to 
+      <strong>Penny.com</strong>
+      <hr>
+
+      <h1>Author Search</h1>
+      Please enter an author name:
+      <input type="text" id="authorInput" oninput="getResults()">
+      <hr>
+      <p id="resultsParagraph"></p>
+      
+      <hr>
+      Date and time: <span id="datetimeSpan"></span><br>
+      Created by <a href="https://www.cs.princeton.edu/~rdondero">
+      Bob Dondero</a>
+      <hr>
+         
+      <script>
+
+         function getAmPm()
+         {
+            let dateTime = new Date();
+            let hours = dateTime.getHours();
+            let amPm = "morning";
+            if (hours >= 12)
+               amPm = "afternoon";
+            document.getElementById("ampmSpan").innerHTML = amPm;
+            setTimeout(getAmPm, 500);
+         }
+
+         function getDateTime()
+         {
+            let dateTime = new Date();
+            document.getElementById("datetimeSpan").innerHTML =
+               dateTime.toLocaleString();
+            setTimeout(getDateTime, 500);
+         }
+
+         function createAjaxRequest()  // From Nixon book
+         {
+            let req;
+                       
+            try  // Some browser other than Internet Explorer
+            {
+               req = new XMLHttpRequest();
+            }
+            catch (e1) 
+            {    
+               try  // Internet Explorer 6+
+               {
+                  req = new ActiveXObject("Msxml2.XMLHTTP");
+               }
+               catch (e2) 
+               {  
+                  try  // Internet Explorer 5
+                  { 
+                     req = new ActiveXObject("Microsoft.XMLHTTP"); 
+                  }
+                  catch (e3)
+                  {  
+                     req = false;
+                  }
+               }
+            }
+            return req;
+         }
+
+         function processReadyStateChange()
+         {
+            const STATE_UNINITIALIZED = 0;
+            const STATE_LOADING       = 1;
+            const STATE_LOADED        = 2;
+            const STATE_INTERACTIVE   = 3;
+            const STATE_COMPLETED     = 4;
+            
+            if (this.readyState != STATE_COMPLETED)
+               return;
+            
+            if (this.status != 200)  // Request succeeded?
+            {  
+               //alert(
+               //   "AJAX error: Request failed: " + this.statusText);
+               return;
+            }
+            
+            if (this.responseText == null)  // Data received?
+            {  
+               alert("AJAX error: No data received");
+               return;
+            }
+
+            let resultsParagraph = 
+               document.getElementById("resultsParagraph");
+            resultsParagraph.innerHTML = this.responseText;
+         }
+
+         let request = null;
+         
+         function getResults()
+         {
+            let author = document.getElementById('authorInput').value;
+            author = encodeURIComponent(author);
+            let url = "/searchresults?author=" + author
+               
+            if (request != null)
+               request.abort();
+            
+            request = createAjaxRequest();
+            if (request == null) return;
+            request.onreadystatechange = processReadyStateChange;
+            request.open("GET", url);
+            request.send(null);
+         }
+
+      </script>      
+   </body>
+</html>
