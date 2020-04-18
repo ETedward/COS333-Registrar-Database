@@ -52,14 +52,15 @@ def handlereg():
 
 @app.route('/', methods=['GET'])
 def index():
-    if request.cookies.get('prevDept'):
-        dept = request.cookies.get('prevDept')
-    if request.cookies.get('pCourseNum'):
-        coursenum = request.cookies.get('pCourseNum')
-    if request.cookies.get('prevArea'):
-        area = request.cookies.get('prevArea')
-    if request.cookies.get('prevTitle'):
-        title = request.cookies.get('prevTitle')
+
+    html = render_template('index.html')
+    response = make_response(html)
+    return response
+
+# ---------------------------------------------------
+
+@app.route('/regoverviews', methods=['GET'])
+def overview():
 
     if request.args.get('dept'):
         dept = request.args.get('dept')
@@ -96,38 +97,19 @@ def index():
     print(args)
     result = regserver.managedb(args)
 
-    html = render_template('index.html',
+
+    html = render_template('result.html',
                            dept=dept,
                            coursenum=coursenum,
                            area=area,
                            title=title,
                            result=result)
     response = make_response(html)
-
-    if request.args.get('dept'):
-        response.set_cookie('prevDept', value=dept)
-    else:
-        response.set_cookie('prevDept', max_age=0)
-    if request.args.get('coursenum'):
-        response.set_cookie('pCourseNum', value=coursenum)
-    else:
-        response.set_cookie('pCourseNum', max_age=0)
-    if request.args.get('area'):
-        response.set_cookie('prevArea', value=area)
-    else:
-        response.set_cookie('prevArea', max_age=0)
-    if request.args.get('title'):
-        response.set_cookie('prevTitle', value=title)
-    else:
-        response.set_cookie('prevTitle', max_age=0)
-
-    url = request.url
-    print(url)
-    response.set_cookie('prevAddress', value =url)
-
     return response
 
+
 # ---------------------------------------------------
+
 
 
 if __name__ == '__main__':
