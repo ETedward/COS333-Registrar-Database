@@ -40,6 +40,8 @@ def handlereg():
                                input2=input[6:],
                                redir_url=redir_url)
     except:
+        if (not isinstance(classid, int)):
+            html = render_template('missing.html', message="classid is not numeric")
         if (classid):
             html = render_template('missing.html', message="classid does not exist")
         else:
@@ -47,8 +49,6 @@ def handlereg():
 
     response = make_response(html)
     return response
-
-
 
 @app.route('/', methods=['GET'])
 def index():
@@ -108,8 +108,6 @@ def overview():
 
 
 # ---------------------------------------------------
-
-
 
 if __name__ == '__main__':
     if len(argv) != 2:
