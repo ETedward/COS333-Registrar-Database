@@ -19,92 +19,122 @@ app = Flask(__name__, template_folder='.')
 
 @app.route('/regdetails', methods=['GET'])
 def handlereg():
-    url = request.url
-
-    prev_url = request.cookies.get('prevAddress')
-    url_index = prev_url.find('?')
-    redir_url = prev_url[url_index:]
-
-    index = url.find('=')
-    classid = url[index + 1:]
-
-    idlist = ["regdetails","-h", classid]
-
     try:
-        output = regdetails.runDetails(idlist)
-        input = output.splitlines()
+        url = request.url
 
-        html = render_template('indexreg.html',
-                               classid=classid,
-                               input1=input[0:6],
-                               input2=input[6:],
-                               redir_url=redir_url)
-    except:
-        if (classid):
-            html = render_template('missing.html', message="classid does not exist")
-        else:
-            html = render_template('missing.html', message="Missing class id")
+        prev_url = request.cookies.get('prevAddress')
+        url_index = prev_url.find('?')
+        redir_url = prev_url[url_index:]
 
-    response = make_response(html)
-    return response
+        index = url.find('=')
+        classid = url[index + 1:]
+
+        idlist = ["regdetails","-h", classid]
+        try:
+            output = regdetails.runDetails(idlist)
+            input = output.splitlines()
+
+            html = render_template('indexreg.html',
+                                classid=classid,
+                                input1=input[0:6],
+                                input2=input[6:],
+                                redir_url=redir_url)
+        except NameError:
+            html = render_template('error.html', error="database reg.sqlite is corrupted")
+            response = make_response(html)
+            return response
+        except LookupError:
+                html = render_template('error.html', error="database reg.sqlite not found")
+                response = make_response(html)
+                return response
+        except:
+            if len(classid) < 1:
+                html = render_template('error.html', error="Missing class id")
+            elif (not classid.isnumeric()): 
+                html = render_template('error.html', error="classid is not an integer")
+            else:
+                html = render_template('error.html', error="classid does not exist")
+        response = make_response(html)
+        return response
+    
+    except Exception as e:
+        html = render_template('error.html', error=e)
+        response = make_response(html)
+        return response
 
 
 
 @app.route('/', methods=['GET'])
 def index():
-
-    html = render_template('index.html')
-    response = make_response(html)
-    return response
+    try:
+        html = render_template('index.html')
+        response = make_response(html)
+        return response
+    except Exception as e:
+        html = render_template('error.html', error=e)
+        response = make_response(html)
+        return response
 
 # ---------------------------------------------------
 
 @app.route('/regoverviews', methods=['GET'])
 def overview():
+    try:
+        if request.args.get('dept'):
+            dept = request.args.get('dept')
+        else:
+            dept = ''
+        if request.args.get('coursenum'):
+            coursenum = request.args.get('coursenum')
+        else:
+            coursenum = ''
+        if request.args.get('area'):
+            area = request.args.get('area')
+        else:
+            area = ''
+        if request.args.get('title'):
+            title = request.args.get('title')
+        else:
+            title = ''
 
-    if request.args.get('dept'):
-        dept = request.args.get('dept')
-    else:
-        dept = ''
-    if request.args.get('coursenum'):
-        coursenum = request.args.get('coursenum')
-    else:
-        coursenum = ''
-    if request.args.get('area'):
-        area = request.args.get('area')
-    else:
-        area = ''
-    if request.args.get('title'):
-        title = request.args.get('title')
-    else:
-        title = ''
-
-    reg = 'reg'
-    args = [reg]
-    args.append("-h")
-    if dept:
-        args.append('-dept')
-        args.append(dept)
-    if coursenum:
-        args.append('-coursenum')
-        args.append(coursenum)
-    if area:
-        args.append('-area')
-        args.append(area)
-    if title:
-        args.append('-title')
-        args.append(title)
-    result = regserver.managedb(args)
+        reg = 'reg'
+        args = [reg]
+        args.append("-h")
+        if dept:
+            args.append('-dept')
+            args.append(dept)
+        if coursenum:
+            args.append('-coursenum')
+            args.append(coursenum)
+        if area:
+            args.append('-area')
+            args.append(area)
+        if title:
+            args.append('-title')
+            args.append(title)
+        result = regserver.managedb(args)
 
 
-    html = render_template('result.html',
-                           dept=dept,
-                           coursenum=coursenum,
-                           area=area,
-                           title=title,
-                           result=result)
-    response = make_response(html)
-    return response
+        html = render_template('result.html',
+                            dept=dept,
+                            coursenum=coursenum,
+                            area=area,
+                            title=title,
+                            result=result)
+        response = make_response(html)
+        return response
+    except NameError:
+        html = render_template('corrupt.html')
+        response = make_response(html)
+        return response
+    except LookupError:
+        html = render_template('missing.html')
+        response = make_response(html)
+        return response
+    except Exception as e:
+        html = render_template('corrupt.html')
+        response = make_response(html)
+        return response
 
 
 # ---------------------------------------------------

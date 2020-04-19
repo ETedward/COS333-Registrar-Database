@@ -100,30 +100,34 @@ def runDetails(argv):
     DATABASE_NAME = 'reg.sqlite'
     finalStr = ''
     if not path.isfile(DATABASE_NAME):
-        raise Exception('regdetails: database reg.sqlite not found')
+        raise LookupError
 
-    try:
-        errorcheck(argv)
-    except NameError:
-        print('regdetails: missing classid')
-        exit(1)
-    except SyntaxError:
-        print('regdetails: too many arguments')
-        exit(1)
-    except ValueError:
-        print('regdetails: classid is not an integer')
-        exit(1)
+    # try:
+    errorcheck(argv)
+    # except NameError:
+    #     print('regdetails: missing classid')
+    #     exit(1)
+    # except SyntaxError:
+    #     print('regdetails: too many arguments')
+    #     exit(1)
+    # except ValueError:
+    #     print('regdetails: classid is not an integer')
+    #     exit(1)
 
     connection = connect(DATABASE_NAME)
     cursor = connection.cursor()
 
     stmtStr = selectStr1()
-    if argv[1] == '-h':
-        values = argv[2]
-        cursor.execute(stmtStr, [values])
-    else:
-        values = argv[1]
-        cursor.execute(stmtStr, [values])
+    try:
+        if argv[1] == '-h':
+            values = argv[2]
+            cursor.execute(stmtStr, [values])
+        else:
+            values = argv[1]
+            cursor.execute(stmtStr, [values])
+    except Exception as e:
+        print(e)
+        raise NameError
 
     row = cursor.fetchone()
 
