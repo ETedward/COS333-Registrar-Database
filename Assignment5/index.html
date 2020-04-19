@@ -1,16 +1,155 @@
+
 <!DOCTYPE html>
- <html>
+<html>
    <head>
+      <meta name="viewport" content="width=device-width,
+         initial-scale=1">
+
+     <link rel="stylesheet" href=
+"https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+         
       <title>Registrar's Office Class Search</title>
-      </head>
-   <body>
-      {% include 'header.html' %}
+   </head>
+   
+   <body onLoad="document.getElementById('Dept').focus(); getResults()">
 
-      {% include 'form.html' %}
+      <div class="container bg-primary">   
+         <center>
+            <h1>Registrar's Office: Class Search</h1>
+         </center>
+      
+         <div class="row">
+            <div class="col-sm-3">
+               <input class="form-control" type="text"
+                  placeholder="Department"
+                  name="dept" id="Dept" 
+                  oninput="getResults()">
+            </div>
+            <div class="col-sm-3">
+               <input class="form-control" type="text" 
+                  placeholder="Number"
+                  name="coursenum" id="Coursenum" 
+                  oninput="getResults()">
+            </div>
+            <div class="col-sm-3">
+               <input class="form-control" type="text"
+                  placeholder="Area"
+                  name="area" id="Area" 
+                  oninput="getResults()">
+            </div>
+            <div class="col-sm-3">
+               <input class="form-control" type="text"
+                  placeholder="Title"
+                  name="title" id="Title" 
+                  oninput="getResults()">
+            </div>
+         </div>
+         <br>
+      </div>
 
-      {% include 'result.html'%}
+      <div class="container">
+         <p id="ResultsArea"></p>
+      </div>
+      
+      <div class="container bg-info">
+         <center>
+            Created by Edward and Bharat
+         </center>
+      </div> 
 
-      {% include 'footer.html' %}
+      <script>
+
+         var request = null;
+
+         function createAjaxRequest()  // From Nixon book
+         {
+            var req;
+                       
+            try  // Some browser other than Internet Explorer
+            {
+               req = new XMLHttpRequest();
+            }
+            catch (e1) 
+            {    
+               try  // Internet Explorer 6+
+               {
+                  req = new ActiveXObject("Msxml2.XMLHTTP");
+               }
+               catch (e2) 
+               {  
+                  try  // Internet Explorer 5
+                  { 
+                     req = new ActiveXObject("Microsoft.XMLHTTP"); 
+                  }
+                  catch (e3)
+                  {  
+                     req = false;
+                  }
+               }
+            }
+            return req;
+         }
+
+         function processReadyStateChange()
+         {
+            var STATE_UNINITIALIZED = 0;
+            var STATE_LOADING       = 1;
+            var STATE_LOADED        = 2;
+            var STATE_INTERACTIVE   = 3;
+            var STATE_COMPLETED     = 4;
+
+            if (this.readyState != STATE_COMPLETED)
+               return;
+               
+            if (this.status != 200)         // Request succeeded?
+            {  
+               //alert("AJAX error: Request failed: " + 
+               //   this.statusText);
+               return;
+            }
+            
+            if (this.responseText == null)  // Data received?
+            {  
+               alert("AJAX error: No data received");
+               return;
+            }
+            var resultsArea = document.getElementById('ResultsArea');   
+            resultsArea.innerHTML = this.responseText;
+         }
+
+         function getResults()
+         {
+            var dept = document.getElementById('Dept').value;
+            var coursenum = 
+               document.getElementById('Coursenum').value;
+            var area = document.getElementById('Area').value;
+            var title = document.getElementById('Title').value;
+
+            dept = encodeURIComponent(dept);
+            coursenum = encodeURIComponent(coursenum);
+            area = encodeURIComponent(area);
+            title = encodeURIComponent(title);
+                                    
+            if (request != null)
+               request.abort();
+               
+            request = createAjaxRequest();
+            if (! request)
+            {
+               alert("AJAX error: Your browser doesn't support AJAX");
+               return;
+            }
+            
+            request.onreadystatechange = processReadyStateChange;
+
+            request.open("GET", "/regoverviews?" +
+               "dept=" + dept + 
+               "&coursenum=" + coursenum + 
+               "&area=" + area + 
+               "&title=" + title);
+            request.send(null);
+         }
+
+      </script>
    </body>
- </html>
-
+</html>
