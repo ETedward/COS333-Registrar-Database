@@ -62,8 +62,6 @@ def handlereg():
         response = make_response(html)
         return response
 
-
-
 @app.route('/', methods=['GET'])
 def index():
     try:
@@ -138,8 +136,6 @@ def overview():
 
 
 # ---------------------------------------------------
-
-
 
 if __name__ == '__main__':
     if len(argv) != 2:
